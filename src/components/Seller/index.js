@@ -12,7 +12,7 @@ const Index = () => {
   console.log(shopname);
   useEffect(() => {
     axios
-      .get(`/api/v1/seller/shop/${shopname}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/v1/seller/shop/${shopname}`)
       .then((res) => {
         console.log(res?.data?.data[0]);
         setShopData(res?.data?.data[0]);

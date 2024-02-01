@@ -10,7 +10,7 @@ const OneProduct = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/v1/seller/product/${id}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/v1/seller/product/${id}`)
       .then((res) => {
         //console.log(res);
         setProductdata(res.data.data);
