@@ -11,8 +11,7 @@ const Login = () => {
   const password = useRef(null);
   const username = useRef(null);
   const fullName = useRef(null);
-  const avatar = useRef(null);
-  const coverImage = useRef(null);
+
   const [errormsg, seterrmsg] = useState(false);
   const [islogin, setlogin] = useState(true);
   const [isLoading, setLoading] = useState(false);
