@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Logoutuser } from "../../utils/userutils";
 const Header = () => {
   const status = useSelector((store) => store.user.status);
   return (

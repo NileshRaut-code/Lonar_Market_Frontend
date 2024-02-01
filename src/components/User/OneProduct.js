@@ -16,7 +16,7 @@ const OneProduct = () => {
         setProductdata(res.data.data);
       }) //console.log(res))
       .catch((err) => console.log(err)); //console.log(err));
-  }, [id]);
+  }, []);
 
   return Productdata ? <OneProductcard data={Productdata} /> : <Loading />;
 };
