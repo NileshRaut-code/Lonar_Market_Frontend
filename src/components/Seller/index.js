@@ -20,7 +20,7 @@ const Index = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [shopname]);
   if (shopData === undefined) {
     return (
       <div className="container h-screen w-full bg-gray-700 mx-auto ">
@@ -47,7 +47,7 @@ const Index = () => {
         {/* Shop owner information */}
         <section className="mt-4">
           <div className="flex items-center">
-            <img
+            <image
               src={shopData?.avatar}
               alt="Owner Avatar"
               className="w-12 h-12 rounded-full mr-2"
@@ -58,7 +58,7 @@ const Index = () => {
             </div>
           </div>
           <div className="mt-4">
-            <img
+            <image
               src={shopData?.coverImage}
               alt="Cover Image"
               className="w-full h-32 object-cover rounded-md"
