@@ -15,59 +15,7 @@ const Footer = () => {
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                Resources
-              </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                <li className="mb-4">
-                  <Link to={"/"} className="hover:underline">
-                    Lonar Markate Placee
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/"} className="hover:underline">
-                    Tailwind CSS
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                Follow us
-              </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                <li className="mb-4">
-                  <Link to={"/"} className="hover:underline ">
-                    Github
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/"} className="hover:underline">
-                    Discord
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
-                Legal
-              </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
-                <li className="mb-4">
-                  <Link to={"/"} className="hover:underline">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link to={"/"} className="hover:underline">
-                    Terms &amp; Conditions
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
+          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3"></div>
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">

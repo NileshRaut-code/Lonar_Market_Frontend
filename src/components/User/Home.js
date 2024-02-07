@@ -26,7 +26,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r flex-wrap flex-col md:flex-row from-gray-800 via-gray-900 to-black text-white min-h-screen flex items-center justify-center ">
+      <div className="bg-white dark:bg-gradient-to-r flex-wrap flex-col md:flex-row dark:from-gray-800 dark:via-gray-900 dark:to-black text-white min-h-screen flex items-center justify-center ">
         {!allproductdata ? (
           <Loading />
         ) : (

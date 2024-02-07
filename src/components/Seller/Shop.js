@@ -5,14 +5,14 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Productcart from "../User/Productcart";
 import Loading from "../Loader comp/Loading";
-const Index = () => {
+const Shop = () => {
   const [shopData, setShopData] = useState(null);
 
   const { shopname } = useParams();
   console.log(shopname);
   useEffect(() => {
     axios
-      .get(`/api/v1/seller/shop/${shopname}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/v1/seller/shop/${shopname}`)
       .then((res) => {
         console.log(res?.data?.data[0]);
         setShopData(res?.data?.data[0]);
@@ -84,4 +84,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Shop;

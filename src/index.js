@@ -11,9 +11,12 @@ import appstore from "./utils/appstore.js";
 import Auth from "./auth/auth.js";
 import OneProduct from "./components/User/OneProduct.js";
 import Logout from "./components/Logout.js";
-import Dashboard from "./components/Dashboard.js";
-import Index from "./components/Seller/index.js";
+import DashBoard from "./components/Seller/Home.js";
+import Shop from "./components/Seller/Shop.js";
 import Page from "./components/User/Page.js";
+import { Cartpage } from "./Cart/Cartpage.js";
+import Authadmin from "./auth/authadmin.js";
+import { Profile } from "./components/User/Profile.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -34,9 +37,9 @@ const routes = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          <Auth aut={true}>
-            <Dashboard />
-          </Auth>
+          <Authadmin aut={true} role={"SELLER"}>
+            <DashBoard />
+          </Authadmin>
         ),
       },
       {
@@ -49,11 +52,23 @@ const routes = createBrowserRouter([
       },
       {
         path: "/shop/:shopname",
-        element: <Index />,
+        element: <Shop />,
       },
       {
         path: "/page/:id",
         element: <Page />,
+      },
+      {
+        path: "/cart",
+        element: <Cartpage />,
+      },
+      {
+        path: "/profile",
+        element: (
+          <Auth>
+            <Profile />
+          </Auth>
+        ),
       },
     ],
   },

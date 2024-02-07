@@ -108,3 +108,21 @@ export const Signupuser = (dispatch, navigate, seterrmsg, body, setLoading) => {
         seterrmsg("User With Email or Username is already Existed");
     });
 };
+
+export const reviewSubmit = (body, id) => {
+  console.log(body, id);
+  axiosInstance
+    .post(
+      `${process.env.REACT_APP_API_URL}/api/v1/seller/product/createcomment/${id}`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => console.log(err));
+};

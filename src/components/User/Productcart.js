@@ -5,7 +5,9 @@ const Productcart = (data) => {
     <>
       <div className=" md:h-64 md:w-[30%] h-128 w-[90%] m-5  md:ml-2 bg-opacity-20 backdrop-filter backdrop-blur-lg bg-clip-padding-box bg-white  border border-opacity-20 border-gray-300 rounded-lg p-6">
         <h2 className="text-2xl font-bold mb-2">{data.data.title}</h2>
-        <p className="text-gray-300 mb-4">{data.data.productdescription}</p>
+        {data.data.productdescription.length > 40
+          ? data.data.productdescription.substring(0, 40) + "..."
+          : data.data.productdescription}
         <h4 className="font-bold mb-2">
           {data.data.createdBy.username && (
             <Link to={`/shop/${data.data.createdBy.username}`}>
