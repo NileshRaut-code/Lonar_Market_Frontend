@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { addProduct } from "../../utils/productutils";
+import { useNavigate } from "react-router-dom";
 
 const Addproduct = () => {
   const title = useRef(null);
@@ -9,6 +10,7 @@ const Addproduct = () => {
   const price = useRef(null);
   const [err, seterr] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const navigate = useNavigate();
   const handleImageChange = (e) => {
     const file = e.target?.files[0];
 
@@ -40,7 +42,7 @@ const Addproduct = () => {
     body.append("Avaiblestock", Avaiblestock.current.value);
     body.append("price", price.current.value);
     body.append("productImage", productImage.current.files[0]);
-    addProduct(body, seterr);
+    addProduct(body, seterr, navigate);
   }
   return (
     <section className="bg-white dark:bg-gray-900">
