@@ -14,6 +14,7 @@ const OneProductcard = (data) => {
         name: data.name,
         price: data.price,
         details: data.details,
+        image: data.image,
       })
     );
   };
@@ -28,7 +29,7 @@ const OneProductcard = (data) => {
                 <img
                   className="w-full h-full object-cover"
                   src={
-                    productdetail.image
+                    productdetail.image !== ""
                       ? productdetail.image
                       : "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
                   }
@@ -44,6 +45,7 @@ const OneProductcard = (data) => {
                         name: productdetail.title,
                         price: productdetail.price,
                         details: productdetail.productdescription,
+                        image: productdetail.image,
                       });
                     }}
                     className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"

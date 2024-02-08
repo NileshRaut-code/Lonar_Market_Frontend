@@ -21,3 +21,21 @@ export const addProduct = (body, seterr, navigate) => {
       //   seterr("some error caught");
     });
 };
+
+export const addProductwithoutimage = (body, seterr, navigate) => {
+  axiosInstance
+    .post("/api/v1/seller/create-product", body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      seterr("Product Added wihtout image Succesfully");
+      console.log(res);
+      const id = res.data.data._id;
+      navigate(`/Product/${id}`);
+    })
+    .catch((err) => {
+      //   seterr("some error caught");
+    });
+};

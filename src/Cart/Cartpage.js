@@ -24,9 +24,14 @@ export const Cartpage = () => {
               key={item.id}
               className="flex items-center border-b border-gray-200 py-4"
             >
+              {console.log(item)}
               <img
-                src="https://dummyimage.com/150x150/ddd/000"
-                alt="Product "
+                src={
+                  item.image == ""
+                    ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
+                    : item.image
+                }
+                alt="Product cart"
                 className="w-24 h-24 object-cover rounded-md mr-8"
               />
               <div>
@@ -37,7 +42,7 @@ export const Cartpage = () => {
                   Quantity: {item.quantity}
                 </p>
                 <p className="text-gray-500 dark:text-gray-200">
-                  Price: ${item.price * item.quantity}
+                  Price: ₹ {item.price * item.quantity}
                 </p>
               </div>
             </div>
@@ -45,7 +50,7 @@ export const Cartpage = () => {
 
           <div className="flex justify-between items-center mt-8">
             <strong className="text-xl dark:text-gray-50">
-              Total Price: ${totalPrice}
+              Total Price: ₹ {totalPrice}
             </strong>
             <button className="bg-gray-900 dark:bg-gray-600 text-white py-2 px-6 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700">
               Checkout

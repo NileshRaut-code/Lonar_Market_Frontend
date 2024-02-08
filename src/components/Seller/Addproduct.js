@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { addProduct } from "../../utils/productutils";
+import { addProduct, addProductwithoutimage } from "../../utils/productutils";
 import { useNavigate } from "react-router-dom";
 
 const Addproduct = () => {
@@ -29,20 +29,32 @@ const Addproduct = () => {
       !title.current.value ||
       !productdescription.current.value ||
       !Avaiblestock.current.value ||
-      !price.current.value ||
-      !productImage.current.files[0]
+      !price.current.value
+      // ||!productImage.current.files[0]
     ) {
       seterr("All field are required");
 
       return;
     }
-    const body = new FormData();
-    body.append("title", title.current.value);
-    body.append("productdescription", productdescription.current.value);
-    body.append("Avaiblestock", Avaiblestock.current.value);
-    body.append("price", price.current.value);
-    body.append("productImage", productImage.current.files[0]);
-    addProduct(body, seterr, navigate);
+
+    if (productImage) {
+      const body = new FormData();
+      body.append("title", title.current.value);
+      body.append("productdescription", productdescription.current.value);
+      body.append("Avaiblestock", Avaiblestock.current.value);
+      body.append("price", price.current.value);
+      body.append("productImage", productImage.current.files[0]);
+      addProduct(body, seterr, navigate);
+    } else {
+      const pdata = {
+        title: title.current.value,
+        productdescription: productdescription.current.value,
+        Avaiblestock: Avaiblestock.current.value,
+        price: price.current.value,
+      };
+      const body = JSON.stringify(pdata);
+      addProductwithoutimage(body, seterr, navigate);
+    }
   }
   return (
     <section className="bg-white dark:bg-gray-900">
