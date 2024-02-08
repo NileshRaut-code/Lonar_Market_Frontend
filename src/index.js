@@ -15,8 +15,11 @@ import DashBoard from "./components/Seller/Home.js";
 import Shop from "./components/Seller/Shop.js";
 import Page from "./components/User/Page.js";
 import { Cartpage } from "./Cart/Cartpage.js";
-import Authadmin from "./auth/authadmin.js";
+import AuthSeller from "./auth/authseller.js";
 import { Profile } from "./components/User/Profile.js";
+import Authadmin from "./auth/authadmin.js";
+import Adminpage from "./components/Admin/Adminpage.js";
+import Adminchangerole from "./components/Admin/Adminchangerole.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -37,9 +40,9 @@ const routes = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          <Authadmin aut={true} role={"SELLER"}>
+          <AuthSeller aut={true} role={"SELLER"}>
             <DashBoard />
-          </Authadmin>
+          </AuthSeller>
         ),
       },
       {
@@ -68,6 +71,22 @@ const routes = createBrowserRouter([
           <Auth>
             <Profile />
           </Auth>
+        ),
+      },
+      {
+        path: "/admin/dashboard",
+        element: (
+          <Authadmin aut={true} role={"ADMIN"}>
+            <Adminpage />
+          </Authadmin>
+        ),
+      },
+      {
+        path: "/admin/dashboard/changerole",
+        element: (
+          <Authadmin aut={true} role={"ADMIN"}>
+            <Adminchangerole />
+          </Authadmin>
         ),
       },
     ],
