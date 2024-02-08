@@ -32,7 +32,7 @@ export const getsellerdataAdmin = (setseller) => {
 export const changeroleadmin = (data) => {
   console.log(data._id);
 
-  const change_role = data.role == "USER" ? "SELLER" : "USER";
+  const change_role = data.role === "USER" ? "SELLER" : "USER";
   console.log(change_role);
   const jsondata = {
     id: data._id,

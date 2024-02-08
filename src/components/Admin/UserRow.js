@@ -47,7 +47,7 @@ const UserRow = ({ data }) => {
             handlerolechange(data);
           }}
         >
-          Change role to : {data.role == "USER" ? "SELLER" : "USER"}
+          Change role to : {data.role === "USER" ? "SELLER" : "USER"}
         </button>
       </td>
     </tr>

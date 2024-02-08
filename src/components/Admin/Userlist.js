@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React from "react";
+
 import UserRow from "./UserRow";
 
 const Userlist = ({ data }) => {
