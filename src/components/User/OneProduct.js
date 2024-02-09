@@ -33,7 +33,7 @@ const OneProduct = () => {
   return Productdata ? (
     <>
       <OneProductcard data={Productdata} />
-      <div className="bg-gray-100 dark:bg-gray-700 py-8 px-16  text-white text-2xl">
+      <div className="bg-gray-100 dark:bg-gray-700 py-8 px-16  dark:text-white text-black text-2xl">
         Customer Review on {Productdata.title}
       </div>
       {Reviewdata &&

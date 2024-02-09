@@ -29,17 +29,15 @@ const Shop = () => {
     );
   }
   return shopData ? (
-    <div className="bg-gray-700">
-      <div
-        className={`container lg:px-20 md:px-10 sm:px-5 bg-gray-700 mx-auto `}
-      >
-        <header className="bg-gray-800 p-4">
+    <div className="bg-white dark:bg-gray-700">
+      <div className="container lg:px-20 md:px-10 sm:px-5 mx-auto ">
+        <header className="dark:text-white text-black p-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-white text-2xl font-bold">
-                {shopData?.username}
-              </h1>
-              <p className="text-gray-300">{shopData?.shopDescription}</p>
+              <h1 className="text-2xl font-bold">{shopData?.username}</h1>
+              <p className="text-black dark:text-gray-300">
+                {shopData?.shopDescription}
+              </p>
             </div>
           </div>
         </header>
@@ -68,7 +66,7 @@ const Shop = () => {
 
         {/* Product listing */}
 
-        <div className="bg-gradient-to-r flex-wrap flex-col md:flex-row from-gray-800 via-gray-900 to-black text-white min-h-screen flex items-center justify-center ">
+        <div className="dark:bg-gradient-to-r flex-wrap flex-col md:flex-row from-gray-800 via-gray-900 to-black text-white min-h-screen flex items-center justify-center ">
           {/* {allproductdata.data.map((inf) => {
           <Productcart info />;
           // console.log(info);

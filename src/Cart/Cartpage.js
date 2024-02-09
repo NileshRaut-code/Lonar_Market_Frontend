@@ -27,7 +27,7 @@ export const Cartpage = () => {
               {console.log(item)}
               <img
                 src={
-                  item.image == ""
+                  item.image === ""
                     ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
                     : item.image
                 }
