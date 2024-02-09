@@ -4,8 +4,20 @@ const Productcart = (data) => {
   return (
     <>
       <div className=" md:h-64 md:w-[30%] h-128 w-[90%] m-5  md:ml-2 bg-opacity-20 backdrop-filter backdrop-blur-lg bg-clip-padding-box bg-gray-500  border border-opacity-20 border-gray-300 rounded-lg p-6">
+        <div>
+          <img
+            className=" w-full h-full md:w-32 md:h-20"
+            src={
+              data.data.image == ""
+                ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
+                : data.data.image
+            }
+          />
+        </div>
         <h2 className="dark:text-white text-black text-2xl font-bold mb-2">
-          {data.data.title}
+          {data.data.title.length > 30
+            ? data.data.title.substring(0, 30) + "..."
+            : data.data.title}
         </h2>
         <p className="dark:text-white text-black">
           {data.data.productdescription.length > 40
