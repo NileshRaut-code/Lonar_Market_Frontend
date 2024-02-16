@@ -13,6 +13,16 @@ const Allorder = () => {
   if (orderdata == null) {
     return <Loading />;
   }
+  if (orderdata === "Not Found") {
+    return (
+      <div className="bg-gradient-to-r from-gray-800 via-gray-900 to-black">
+        <div className=" flex-wrap flex-col   text-white min-h-screen flex items-center justify-center ">
+          <h2 className="text-3xl">NO ORDER FOUND </h2>
+          <p className="">Looks like you haven`t made your order yet</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full mx-auto p-3 sm:p-20 min-h-screen dark:bg-gray-800">
       <h2 className="text-2xl font-bold mb-8 dark:text-gray-50">Your Order</h2>

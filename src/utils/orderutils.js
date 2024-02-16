@@ -35,5 +35,9 @@ export const vieworder = (setorderedata) => {
   axiosInstance
     .get(`/api/v1/orders/view-order`)
     .then((res) => setorderedata(res.data.data))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      if (err.response.status === 404) {
+        setorderedata("Not Found");
+      }
+    });
 };
