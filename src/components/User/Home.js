@@ -26,18 +26,17 @@ const Home = () => {
         .catch((err) => dispatch(removeProduct())); //console.log(err));
     }
   }, [allproductdata, dispatch]);
-
+  if (!allproductdata) {
+    return <Loading />;
+  }
   return (
     <>
-      <div className="bg-white dark:bg-gradient-to-r flex-wrap flex-col md:flex-row dark:from-gray-800 dark:via-gray-900 dark:to-black text-white min-h-screen flex items-center justify-center ">
-        {!allproductdata ? (
-          <Loading />
-        ) : (
+      <div className="bg-white dark:bg-gradient-to-r gap-4  p-7 sm:p-5 flex-wrap flex-col md:flex-row dark:from-gray-800 dark:via-gray-900 dark:to-black text-white min-h-screen flex items-center justify-center ">
+        {allproductdata &&
           allproductdata.map((data) => {
             return <Productcart key={data._id} data={data} />;
             // console.log(data);
-          })
-        )}
+          })}
       </div>
     </>
   );

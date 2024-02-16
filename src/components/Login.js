@@ -66,7 +66,7 @@ const Login = () => {
           {islogin ? "Log in" : "Sign up"} to your account
         </h2>
       </div>
-      <div className="mx-auto w-full max-w-sm">
+      <div className="p-5 mx-auto w-full max-w-sm">
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
           {!islogin && (
             <div>
@@ -134,7 +134,7 @@ const Login = () => {
             <div>
               <input
                 className="bg-transparent block p-3 w-full rounded-md border-0 py-1.5 text-black dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                type="text"
+                type="password"
                 ref={password}
                 placeholder="Password"
               />

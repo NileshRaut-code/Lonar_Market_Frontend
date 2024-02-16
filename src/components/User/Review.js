@@ -1,6 +1,8 @@
 import React from "react";
+import StarRating from "./StarRating";
 
 const Review = (reviewdata) => {
+  console.log(reviewdata);
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,9 +20,11 @@ const Review = (reviewdata) => {
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               {reviewdata?.data?.createdBy?.fullName}
               {/* Replace with the user's full name */}
-            </h3>
+            </h3>{" "}
+            <StarRating rating={reviewdata?.data?.rating} />
           </div>
         </div>
+
         {/* Comment text box */}
         <div className="mt-4">
           <p
