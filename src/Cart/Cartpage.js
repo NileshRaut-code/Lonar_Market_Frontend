@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { createorder } from "../utils/orderutils";
 
 export const Cartpage = () => {
-  const cart = useSelector((state) => state.cart); // Assuming your cart state is stored in the Redux store
+  const cart = useSelector((state) => state.cart);
+  const userstste = useSelector((store) => store.user.status);
+  const navigate = useNavigate();
+  const [orderloader, Setorderloader] = useState(true);
+  // Assuming your cart state is stored in the Redux store
   console.log(cart);
   // Calculate total price
   //const totalPrice = 100;
@@ -11,8 +17,21 @@ export const Cartpage = () => {
     0
   );
 
+  const orderhandler = () => {
+    Setorderloader(false);
+    if (userstste === false) {
+      navigate("/login");
+    }
+    // if (cart.length === 0) {
+    //   navigate("/");
+    // }
+    const data = { products: cart.products };
+    const body = JSON.stringify(data);
+    createorder(body, navigate);
+  };
+
   return (
-    <div className="container mx-auto p-20 min-h-screen dark:bg-gray-800">
+    <div className="w-full mx-auto p-20 min-h-screen dark:bg-gray-800">
       <h2 className="text-2xl font-bold mb-8 dark:text-gray-50">Your Cart</h2>
 
       {cart.products.length === 0 ? (
@@ -52,8 +71,15 @@ export const Cartpage = () => {
             <strong className="text-xl dark:text-gray-50">
               Total Price: ₹ {totalPrice}
             </strong>
-            <button className="bg-gray-900 dark:bg-gray-600 text-white py-2 px-6 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700">
-              Checkout
+            <button
+              onClick={orderhandler}
+              className="bg-gray-900 dark:bg-gray-600 text-white py-2 px-6 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+            >
+              {orderloader ? (
+                "Checkout"
+              ) : (
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+              )}
             </button>
           </div>
         </div>

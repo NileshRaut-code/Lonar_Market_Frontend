@@ -2,15 +2,17 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../../utils/cartSlice";
 import AddReview from "./AddReview";
+import { Link } from "react-router-dom";
 const OneProductcard = (data) => {
   const logstate = useSelector((store) => store.user.status);
+  const loguser = useSelector((store) => store.user.data);
   //console.log(data.data);
   const productdetail = data.data;
   const dispatch = useDispatch();
   const handlecart = (data) => {
     dispatch(
       addProduct({
-        id: data.id,
+        _id: data.id,
         name: data.name,
         price: data.price,
         details: data.details,
@@ -58,6 +60,18 @@ const OneProductcard = (data) => {
                     Add to Wishlist
                   </button>
                 </div>
+
+                {loguser &&
+                  loguser._id &&
+                  loguser?._id === productdetail?.createdBy?._id && (
+                    <div className="w-1/2 px-2">
+                      <button className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <Link to={`/Product/edit/${productdetail._id}`}>
+                          Edit Produxt
+                        </Link>
+                      </button>
+                    </div>
+                  )}
               </div>
             </div>
             <div className="md:flex-1 px-4">

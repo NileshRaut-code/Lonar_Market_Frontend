@@ -17,6 +17,9 @@ const Home = () => {
         .get(`${process.env.REACT_APP_API_URL}/api/v1/users/allproduct`)
         .then((res) => {
           console.log(res, "thiscaled");
+          res.data.data.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
           dispatch(addProduct(res.data.data));
           console.log(allproductdata);
         }) //console.log(res))

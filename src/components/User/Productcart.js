@@ -8,10 +8,11 @@ const Productcart = (data) => {
           <img
             className=" w-full h-full md:w-32 md:h-20"
             src={
-              data.data.image == ""
+              data.data.image === ""
                 ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
                 : data.data.image
             }
+            alt="Product"
           />
         </div>
         <h2 className="dark:text-white text-black text-2xl font-bold mb-2">

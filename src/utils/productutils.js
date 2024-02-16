@@ -39,3 +39,40 @@ export const addProductwithoutimage = (body, seterr, navigate) => {
       //   seterr("some error caught");
     });
 };
+
+export const getoneProduct = (id, setProductdata) => {
+  axios
+    .get(`${process.env.REACT_APP_API_URL}/api/v1/seller/product/${id}`)
+    .then((res) => {
+      //console.log(res);
+      setProductdata(res.data.data);
+    }) //console.log(res))
+    .catch((err) => console.log(err)); //console.log(err));
+};
+
+export const getComments = (id, setReviewdata) => {
+  axios
+    .get(`${process.env.REACT_APP_API_URL}/api/v1/seller/product/comment/${id}`)
+    .then((res) => {
+      //console.log(res);
+      setReviewdata(res.data.data.reviewdata);
+    }) //console.log(res))
+    .catch((err) => console.log(err)); //console.log(err));
+};
+
+export const updateProduct = (body, seterr, id, navigate) => {
+  axiosInstance
+    .put(`/api/v1/seller/edit/product/${id}`, body, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      const id = res.data.data._id;
+      navigate(`/Product/${id}`);
+    })
+    .catch((err) => {
+      seterr("some error caught");
+    });
+};

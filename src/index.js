@@ -20,6 +20,9 @@ import { Profile } from "./components/User/Profile.js";
 import Authadmin from "./auth/authadmin.js";
 import Adminpage from "./components/Admin/Adminpage.js";
 import Adminchangerole from "./components/Admin/Adminchangerole.js";
+import Editproduct from "./components/Seller/Editproduct.js";
+import Allorder from "./components/User/Allorder.js";
+import OneOrder from "./components/User/OneOrder.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -87,6 +90,30 @@ const routes = createBrowserRouter([
           <Authadmin aut={true} role={"ADMIN"}>
             <Adminchangerole />
           </Authadmin>
+        ),
+      },
+      {
+        path: "/Product/edit/:id",
+        element: (
+          <Auth>
+            <Editproduct />
+          </Auth>
+        ),
+      },
+      {
+        path: "/order",
+        element: (
+          <Auth>
+            <Allorder />
+          </Auth>
+        ),
+      },
+      {
+        path: "/order/:id",
+        element: (
+          <Auth>
+            <OneOrder />
+          </Auth>
         ),
       },
     ],
