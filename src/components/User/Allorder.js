@@ -36,10 +36,25 @@ const Allorder = () => {
               src="https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
             />
             <div class="">
-              <h2 class="text-xl p-2">OrderId : {item._id}</h2>
-              <p class="text-m p-2">Order Date : {item.createdAt}</p>
-              <p class="text-l p-2">Total Price : {item.total_cost}</p>
-              <p class="text-l p-2">Status : {item?.status}</p>
+              <h2 class="text-xl p-2">
+                <span className="text-gray-500">OrderId : </span> #
+                {item._id.substring(0, 6)}
+              </h2>
+              <p class="text-m p-2">
+                <span className="text-gray-500">Order Date :</span>
+                {new Date(item.createdAt).toLocaleDateString("en-US", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <p class="text-l p-2">
+                <span className="text-gray-500">Total Price :</span> ₹
+                {item.total_cost}
+              </p>
+              <p class="text-l p-2">
+                <span className="text-gray-500">Status :</span> {item?.status}
+              </p>
               <Link className="text-l p-3" to={`/order/${item._id}`}>
                 {" "}
                 View/Track Order

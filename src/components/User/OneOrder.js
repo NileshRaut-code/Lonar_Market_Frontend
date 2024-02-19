@@ -18,7 +18,7 @@ const OneOrder = () => {
   return (
     <div className="w-full mx-auto p-3 sm:p-20 min-h-screen dark:bg-gray-800">
       <h2 className="text-2xl font-bold mb-8 dark:text-gray-50">
-        Your Order : {id}
+        Your Order : #{id.substring(0, 6)}
       </h2>
 
       {orderdata.map((item) => (
@@ -34,10 +34,18 @@ const OneOrder = () => {
               }
             />
             <div class="">
-              <h2 class="text-xl p-2">Product Name : {item?._id?.title}</h2>
+              <h2 class="text-xl p-2">
+                <span className="text-gray-500">Product Name : </span>{" "}
+                {item?._id?.title}
+              </h2>
 
-              <p class="text-l p-2">Price : {item?.price}</p>
-              <p class="text-l p-2">Quantity :{item?.quantity}</p>
+              <p class="text-l p-2">
+                <span className="text-gray-500">Price :</span> ₹{item?.price}
+              </p>
+              <p class="text-l p-2">
+                <span className="text-gray-500">Quantity : </span>{" "}
+                {item?.quantity}
+              </p>
               <Link className="text-l p-3" to={`/Product/${item?._id?._id}`}>
                 {" "}
                 View Product

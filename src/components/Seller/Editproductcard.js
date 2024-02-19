@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { updateProduct } from "../../utils/productutils";
+import { deleteProduct, updateProduct } from "../../utils/productutils";
 const Editproductcard = ({ data }) => {
   const navigate = useNavigate();
   const userdata = useSelector((store) => store.user.data);
@@ -36,7 +36,9 @@ const Editproductcard = ({ data }) => {
       reader.readAsDataURL(file);
     }
   };
-
+  const handledelete = () => {
+    deleteProduct(seterr, data._id);
+  };
   const handleupdate = () => {
     const body = new FormData();
     title.current.value && body.append("title", title.current.value);
@@ -178,17 +180,28 @@ const Editproductcard = ({ data }) => {
             </div>
           )}
           <p
-            className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+            className={
+              "mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" +
+              (err ? " p-4" : "")
+            }
             role="alert"
           >
             {err}
           </p>
-          <button
-            onClick={handleupdate}
-            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
-          >
-            Edit product
-          </button>
+          <div className="grid grid-cols-2 gap-7">
+            <button
+              onClick={handleupdate}
+              className=" items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-gray-700 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-800"
+            >
+              Edit product
+            </button>
+            <button
+              onClick={handledelete}
+              className=" items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-gray-700 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-800"
+            >
+              Delete Product
+            </button>
+          </div>
         </form>
       </div>
     </section>

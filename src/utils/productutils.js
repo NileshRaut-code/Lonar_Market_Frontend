@@ -76,3 +76,13 @@ export const updateProduct = (body, seterr, id, navigate) => {
       seterr("some error caught");
     });
 };
+export const deleteProduct = (seterr, id) => {
+  axiosInstance
+    .delete(`/api/v1/seller/product/delete/${id}`)
+    .then((res) => {
+      seterr("Product Succesfully Deleted");
+    })
+    .catch((err) => {
+      seterr("some error caught To Delete Product");
+    });
+};
