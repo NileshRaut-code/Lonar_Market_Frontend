@@ -10,7 +10,7 @@ const OneOrder = () => {
   useEffect(() => {
     viewoneorder(id, setorderedata, navigate);
     console.log(orderdata);
-  }, [id, navigate, orderdata]);
+  }, []);
 
   if (orderdata == null) {
     return <Loading />;

@@ -8,7 +8,7 @@ const Allorder = () => {
   useEffect(() => {
     vieworder(setorderedata);
     console.log(orderdata);
-  }, [orderdata]);
+  }, []);
 
   if (orderdata == null) {
     return <Loading />;
