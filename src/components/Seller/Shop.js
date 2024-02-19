@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Productcart from "../User/Productcart";
 import Loading from "../Loader comp/Loading";
+import NotFound from "../constantcomponets/NotFound";
 const Shop = () => {
   const [shopData, setShopData] = useState(null);
 
@@ -19,14 +20,12 @@ const Shop = () => {
       })
       .catch((error) => {
         console.log(error);
+        setShopData("Not Found");
       });
   }, [shopname]);
-  if (shopData === undefined) {
-    return (
-      <div className="container h-screen w-full bg-gray-700 mx-auto ">
-        <h1>No data</h1>
-      </div>
-    );
+  if (shopData === undefined || shopData === "Not Found") {
+    //console.log("hellow", shopData);
+    return <NotFound msg="Shop" />;
   }
   return shopData ? (
     <div className="bg-white dark:bg-gray-700">
