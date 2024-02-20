@@ -23,6 +23,7 @@ import Adminchangerole from "./components/Admin/Adminchangerole.js";
 import Editproduct from "./components/Seller/Editproduct.js";
 import Allorder from "./components/User/Allorder.js";
 import OneOrder from "./components/User/OneOrder.js";
+import OrderManage from "./components/Seller/OrderManage.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -45,6 +46,14 @@ const routes = createBrowserRouter([
         element: (
           <AuthSeller aut={true} role={"SELLER"}>
             <DashBoard />
+          </AuthSeller>
+        ),
+      },
+      {
+        path: "/dashboard/orders",
+        element: (
+          <AuthSeller aut={true} role={"SELLER"}>
+            <OrderManage />
           </AuthSeller>
         ),
       },

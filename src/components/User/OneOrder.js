@@ -28,15 +28,15 @@ const OneOrder = () => {
               className="w-full sm:w-24 sm:h-24 object-cover rounded-md mr-8"
               alt="order wala i"
               src={
-                item?._id?.image === ""
+                item?.product_id?.image === ""
                   ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
-                  : item?._id?.image
+                  : item?.product_id?.image
               }
             />
             <div class="">
               <h2 class="text-xl p-2">
                 <span className="text-gray-500">Product Name : </span>{" "}
-                {item?._id?.title}
+                {item?.product_id?.title}
               </h2>
 
               <p class="text-l p-2">
@@ -46,8 +46,10 @@ const OneOrder = () => {
                 <span className="text-gray-500">Quantity : </span>{" "}
                 {item?.quantity}
               </p>
-              <Link className="text-l p-3" to={`/Product/${item?._id?._id}`}>
-                {" "}
+              <Link
+                className="text-l p-3"
+                to={`/Product/${item?.product_id?._id}`}
+              >
                 View Product
               </Link>
             </div>

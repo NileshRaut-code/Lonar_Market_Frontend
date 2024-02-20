@@ -12,7 +12,7 @@ const OneProductcard = (data) => {
   const handlecart = (data) => {
     dispatch(
       addProduct({
-        _id: data.id,
+        product_id: data.id,
         name: data.name,
         price: data.price,
         details: data.details,

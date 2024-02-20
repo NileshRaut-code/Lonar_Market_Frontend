@@ -14,7 +14,8 @@ export const createorder = (body, navigate) => {
     })
     .then((res) => {
       setTimeout(() => {
-        navigate(`/order/${res.data.data._id}`);
+        console.log(res.data.data);
+        navigate(`/order`);
       }, 3000);
     })
     .catch((err) => console.log(err));
@@ -23,7 +24,10 @@ export const createorder = (body, navigate) => {
 export const viewoneorder = (id, setorderedata, navigate) => {
   axiosInstance
     .get(`/api/v1/orders/view-order/${id}`)
-    .then((res) => setorderedata(res.data.data[0].product_list))
+    .then((res) => {
+      console.log(res.data.data);
+      setorderedata(res.data.data);
+    })
     .catch((err) => {
       if (err.request.status === 404) {
         navigate("/404");
