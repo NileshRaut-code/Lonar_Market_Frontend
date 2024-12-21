@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+
 const Header = () => {
   const status = useSelector((store) => store.user.status);
   const data = useSelector((store) => store.user.data);
@@ -10,52 +11,53 @@ const Header = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
   return (
     <header>
-      <nav className="bg-white px-4 lg:px-6 py-2.5 dark:bg-gray-800 border-b-2 dark:border-gray-700 ">
+      <nav className="bg-white px-4 lg:px-6 py-3 border-b-2 border-gray-200">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
           <Link to="/" className="flex items-center">
             <img
               src="https://www.nileshblog.tech/wp-content/uploads/2023/12/NileshBlog.Tech-Software-Development-Learning-Problem-Solving-Platform.svg"
-              className="mr-3 h-6 sm:h-9"
+              className="mr-3 h-8 sm:h-10"
               alt="NileshBlog.Tech Logo"
             />
           </Link>
-          <div className="flex items-center lg:order-2">
+          <div className="flex items-center lg:order-2 space-x-4">
             {!status ? (
               <Link
                 to="/login"
-                className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-4 py-2 lg:px-5 lg:py-2.5"
               >
                 Log in
               </Link>
             ) : (
               <Link
                 to="/logout"
-                className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-2 lg:px-5 lg:py-2.5"
               >
                 Logout
               </Link>
             )}
-            {status && (
+            {status && data.role !== "USER" && (
               <Link
                 to={data.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"}
-                className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-4 py-2 lg:px-5 lg:py-2.5"
               >
-                DashBoard
+                Dashboard
               </Link>
             )}
 
             {status && (
-              <h2 className="text-white ">
-                Role : <span>{data.role}</span>
+              <h2 className="text-gray-900 text-sm font-semibold">
+                Role: <span className="capitalize">{data.role}</span>
               </h2>
             )}
 
             <button
               data-collapse-toggle="mobile-menu-2"
               type="button"
-              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 ml-1 text-sm text-gray-900 rounded-lg lg:hidden hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
               aria-controls="mobile-menu-2"
               aria-expanded={isMenuOpen ? "true" : "false"}
               onClick={toggleMenu}
@@ -93,6 +95,7 @@ const Header = () => {
               )}
             </button>
           </div>
+
           <div
             className={`${
               isMenuOpen ? "block" : "hidden"
@@ -103,7 +106,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/"
-                  className="block py-2 pr-4 pl-3  text-black rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
+                  className="block py-2 pr-4 pl-3 text-gray-900 rounded bg-blue-700 hover:bg-blue-800 lg:bg-transparent lg:text-blue-700 lg:p-0"
                   aria-current="page"
                 >
                   Home
@@ -113,7 +116,7 @@ const Header = () => {
                 <li>
                   <Link
                     to="/profile"
-                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                    className="block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
                   >
                     Profile
                   </Link>
@@ -123,7 +126,7 @@ const Header = () => {
                 <li>
                   <Link
                     to="/order"
-                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                    className="block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
                   >
                     Order
                   </Link>
@@ -132,7 +135,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/cart"
-                  className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                  className="block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
                 >
                   Cart
                 </Link>

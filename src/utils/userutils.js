@@ -127,3 +127,51 @@ export const reviewSubmit = (body, id) => {
     })
     .catch((err) => console.log(err));
 };
+
+export const updateProfile = (body, seterr) => {
+  axiosInstance
+    .patch(`/api/v1/users/update-account`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterr("Profile Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};
+
+export const updateProfileimage = (body, seterr) => {
+  axiosInstance
+    .patch(`/api/v1/users/update-avatar`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterr("Profile Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};
+
+export const updateuserpassword = (body, seterrp) => {
+  axiosInstance
+    .post(`/api/v1/users/change-password`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterrp("Password Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};

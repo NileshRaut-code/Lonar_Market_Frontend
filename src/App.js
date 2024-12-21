@@ -25,14 +25,14 @@ const App = () => {
     }
   }, [dispatch, navigate, userdata]);
 
-  return loader ? (
-    <>
-      <Header />
-      <Outlet />
-      <Footer />
-    </>
-  ) : (
-    <Loading />
+  return (
+    loader && (
+      <>
+        <Header />
+        <Outlet />
+        <Footer />
+      </>
+    )
   ); //add loader components ... so it check make request to check logged on every page...
 };
 

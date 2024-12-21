@@ -24,7 +24,7 @@ const OrderRow = ({ data }) => {
         <p className="whitespace-no-wrap">{data?._id.substring(0, 6)}</p>
       </td>
       <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
-        {data?.product_id?.title.substring(0, 12)}..
+        {data?.productDetails?.title.substring(0, 12)}..
       </td>
       <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
         {data?.quantity}
@@ -54,10 +54,16 @@ const OrderRow = ({ data }) => {
         data.status === "ORDERED BUT PENDING TO DISPATCH" ? (
           <div>
             <select ref={status}>
-              <option value={""}>ORDERED</option>
-              <option value={"DISPATCH"}>DISPATCH</option>
+              {data.status === "DISPATCH" && (
+                <option value={""}>ORDERED</option>
+              )}
+
+              {data.status === "ORDERED BUT PENDING TO DISPATCH" && (
+                <option value={"DISPATCH"}>DISPATCH</option>
+              )}
+
               <option value={"CANCLED"}>CANCELLED</option>
-              {data.status === "DISPATCH" && <option>DELIVERED</option>}
+              <option>DELIVERED</option>
             </select>
 
             <button

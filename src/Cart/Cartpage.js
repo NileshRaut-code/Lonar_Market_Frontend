@@ -8,14 +8,12 @@ export const Cartpage = () => {
   const userstste = useSelector((store) => store.user.status);
   const navigate = useNavigate();
   const [orderloader, Setorderloader] = useState(true);
-  // Assuming your cart state is stored in the Redux store
   const address = useRef(null);
   const pincode = useRef(null);
   const payment_mode = useRef(null);
   const [err, seterr] = useState(null);
-  //console.log(cart);
+
   // Calculate total price
-  //const totalPrice = 100;
   const totalPrice = cart.products.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
@@ -26,10 +24,7 @@ export const Cartpage = () => {
     if (userstste === false) {
       navigate("/login");
     }
-    // if (cart.length === 0) {
-    //   navigate("/");
-    // }
-    //
+
     if (
       !address.current.value ||
       !payment_mode.current.value ||
@@ -51,17 +46,19 @@ export const Cartpage = () => {
   };
 
   return (
-    <div className="w-full mx-auto p-20 min-h-screen dark:bg-gray-800">
-      <h2 className="text-2xl font-bold mb-8 dark:text-gray-50">Your Cart</h2>
-      <div className="grid sm:grid-cols-2">
+    <div className="w-full mx-auto p-8 min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+        Your Cart
+      </h2>
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
         {cart.products.length === 0 ? (
-          <p className="dark:text-gray-50">Your cart is empty</p>
+          <p className="text-gray-600 text-center">Your cart is empty</p>
         ) : (
           <div>
             {cart.products.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center border-b border-gray-200 py-4"
+                className="flex items-center border-b border-gray-200 py-4 hover:bg-gray-100 transition duration-200 ease-in-out"
               >
                 <img
                   src={
@@ -70,16 +67,16 @@ export const Cartpage = () => {
                       : item.image
                   }
                   alt="Product cart"
-                  className="w-24 h-24 object-cover rounded-md mr-8"
+                  className="w-24 h-24 object-cover rounded-md mr-8 shadow-lg"
                 />
                 <div>
-                  <h3 className="text-lg font-bold mb-2 dark:text-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-200 mb-2">
+                  <p className="text-gray-500 mb-2">
                     Quantity: {item.quantity}
                   </p>
-                  <p className="text-gray-500 dark:text-gray-200">
+                  <p className="text-gray-500">
                     Price: ₹ {item.price * item.quantity}
                   </p>
                 </div>
@@ -87,57 +84,57 @@ export const Cartpage = () => {
             ))}
 
             <div className="flex justify-between items-center mt-8">
-              <strong className="text-xl dark:text-gray-50">
+              <strong className="text-xl text-gray-800">
                 Total Price: ₹ {totalPrice}
               </strong>
               <button
                 onClick={orderhandler}
-                className="bg-gray-900 dark:bg-gray-600 text-white py-2 px-6 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+                className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
               >
                 {orderloader ? (
                   "Checkout"
                 ) : (
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
                 )}
               </button>
             </div>
           </div>
         )}
+
         {cart.products.length !== 0 && (
-          <div className="p-8">
-            <h2 className="text-xl font-bold mb-4 dark:text-gray-50">
+          <div className="bg-white p-8 rounded-lg shadow-xl shadow-blue-500/50">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Delivery Details
             </h2>
             <p
-              className={
-                "mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" +
-                (err ? " p-4" : "")
-              }
+              className={`mb-4 text-sm text-red-800 rounded-lg bg-red-50 p-4 ${
+                err ? "" : "hidden"
+              }`}
               role="alert"
             >
               {err}
             </p>
-            <div className="mb-4">
+            <div className="mb-6">
               <input
                 type="text"
                 ref={address}
                 placeholder="Enter Address"
-                className="border border-gray-300 rounded-md py-2 px-4 w-full dark:bg-gray-700 dark:text-gray-200"
+                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-6">
               <input
                 ref={pincode}
                 maxLength="6"
                 type="number"
                 placeholder="Enter Pincode"
-                className="border border-gray-300 rounded-md py-2 px-4 w-full dark:bg-gray-700 dark:text-gray-200"
+                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-6">
               <select
                 ref={payment_mode}
-                className="border border-gray-300 rounded-md py-2 px-4 w-full dark:bg-gray-700 dark:text-gray-200"
+                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
               >
                 <option value="COD">Cash on Delivery</option>
                 <option value="CREDITCARD">Credit Card</option>
