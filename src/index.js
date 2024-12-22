@@ -11,9 +11,19 @@ import appstore from "./utils/appstore.js";
 import Auth from "./auth/auth.js";
 import OneProduct from "./components/User/OneProduct.js";
 import Logout from "./components/Logout.js";
-import Dashboard from "./components/Dashboard.js";
-import Index from "./components/Seller/index.js";
+import DashBoard from "./components/Seller/Home.js";
+import Shop from "./components/Seller/Shop.js";
 import Page from "./components/User/Page.js";
+import { Cartpage } from "./Cart/Cartpage.js";
+import AuthSeller from "./auth/authseller.js";
+import { Profile } from "./components/User/Profile.js";
+import Authadmin from "./auth/authadmin.js";
+import Adminpage from "./components/Admin/Adminpage.js";
+import Adminchangerole from "./components/Admin/Adminchangerole.js";
+import Editproduct from "./components/Seller/Editproduct.js";
+import Allorder from "./components/User/Allorder.js";
+import OneOrder from "./components/User/OneOrder.js";
+import OrderManage from "./components/Seller/OrderManage.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -34,9 +44,17 @@ const routes = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          <Auth aut={true}>
-            <Dashboard />
-          </Auth>
+          <AuthSeller aut={true} role={"SELLER"}>
+            <DashBoard />
+          </AuthSeller>
+        ),
+      },
+      {
+        path: "/dashboard/orders",
+        element: (
+          <AuthSeller aut={true} role={"SELLER"}>
+            <OrderManage />
+          </AuthSeller>
         ),
       },
       {
@@ -49,11 +67,63 @@ const routes = createBrowserRouter([
       },
       {
         path: "/shop/:shopname",
-        element: <Index />,
+        element: <Shop />,
       },
       {
         path: "/page/:id",
         element: <Page />,
+      },
+      {
+        path: "/cart",
+        element: <Cartpage />,
+      },
+      {
+        path: "/profile",
+        element: (
+          <Auth>
+            <Profile />
+          </Auth>
+        ),
+      },
+      {
+        path: "/admin/dashboard",
+        element: (
+          <Authadmin aut={true} role={"ADMIN"}>
+            <Adminpage />
+          </Authadmin>
+        ),
+      },
+      {
+        path: "/admin/dashboard/changerole",
+        element: (
+          <Authadmin aut={true} role={"ADMIN"}>
+            <Adminchangerole />
+          </Authadmin>
+        ),
+      },
+      {
+        path: "/Product/edit/:id",
+        element: (
+          <Auth>
+            <Editproduct />
+          </Auth>
+        ),
+      },
+      {
+        path: "/order",
+        element: (
+          <Auth>
+            <Allorder />
+          </Auth>
+        ),
+      },
+      {
+        path: "/order/:id",
+        element: (
+          <Auth>
+            <OneOrder />
+          </Auth>
+        ),
       },
     ],
   },

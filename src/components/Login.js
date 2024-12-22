@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-
 import { useNavigate } from "react-router-dom";
 import { Loginuser, Signupuser } from "../utils/userutils";
+
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -11,7 +11,6 @@ const Login = () => {
   const password = useRef(null);
   const username = useRef(null);
   const fullName = useRef(null);
-
   const [errormsg, seterrmsg] = useState(false);
   const [islogin, setlogin] = useState(true);
   const [isLoading, setLoading] = useState(false);
@@ -29,7 +28,6 @@ const Login = () => {
   function handlesignin() {
     seterrmsg(null);
     setLoading(true);
-    // console.log(avatar.current.files[0]);
     if (
       !email.current.value ||
       !password.current.value ||
@@ -57,27 +55,26 @@ const Login = () => {
       phoneno: phoneno?.current.value,
     };
     const body = JSON.stringify(requestBody);
-    console.log(body);
     Signupuser(dispatch, navigate, seterrmsg, body, setLoading);
   }
 
   return (
-    <div className="flex flex-col min-h-[67vh] pb-10 bg-gradient-to-r from-gray-800 via-gray-900 to-black">
+    <div className="flex flex-col min-h-[70vh] pb-10 bg-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-200">
+        <h2 className="mt-10 text-center text-2xl font-semibold text-gray-800">
           {islogin ? "Log in" : "Sign up"} to your account
         </h2>
       </div>
-      <div className="mx-auto w-full max-w-sm">
+      <div className="p-5 mx-auto w-full max-w-sm">
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
           {!islogin && (
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-600">
+              <label className="block text-sm font-medium text-gray-700">
                 Full Name
               </label>
               <div>
                 <input
-                  className="bg-transparent	 block p-3 w-full rounded-md border-0 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="bg-white block p-3 w-full rounded-md border border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   type="text"
                   ref={fullName}
                   placeholder="Full Name"
@@ -86,12 +83,12 @@ const Login = () => {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium leading-6 text-gray-600">
+            <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <div>
               <input
-                className="bg-transparent block p-3 w-full rounded-md border-0 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="bg-white block p-3 w-full rounded-md border border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                 type="text"
                 ref={email}
                 placeholder="Email"
@@ -100,12 +97,12 @@ const Login = () => {
           </div>
           {!islogin && (
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-600">
+              <label className="block text-sm font-medium text-gray-700">
                 UserName
               </label>
               <div>
                 <input
-                  className="bg-transparent block p-3 w-full rounded-md border-0 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="bg-white block p-3 w-full rounded-md border border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   type="text"
                   ref={username}
                   placeholder="Username"
@@ -115,13 +112,13 @@ const Login = () => {
           )}
           {!islogin && (
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-600">
+              <label className="block text-sm font-medium text-gray-700">
                 Contact No
               </label>
               <div>
                 <input
-                  className="bg-transparent block p-3 w-full rounded-md border-0 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  type="text"
+                  className="bg-white block p-3 w-full rounded-md border border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  type="number"
                   ref={phoneno}
                   placeholder="Contact No"
                 />
@@ -130,13 +127,13 @@ const Login = () => {
           )}
 
           <div>
-            <label className="block text-sm font-medium leading-6 text-gray-600">
+            <label className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <div>
               <input
-                className="bg-transparent block p-3 w-full rounded-md border-0 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                type="text"
+                className="bg-white block p-3 w-full rounded-md border border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                type="password"
                 ref={password}
                 placeholder="Password"
               />
@@ -144,35 +141,35 @@ const Login = () => {
           </div>
           {errormsg && (
             <p
-              className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+              className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
               role="alert"
             >
               {errormsg}
             </p>
           )}
           <button
-            className="cursor-pointer flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="cursor-pointer flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-600"
             onClick={islogin ? handlelogin : handlesignin}
           >
             {isLoading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
             ) : islogin ? (
-              "LogIn"
+              "Log In"
             ) : (
-              "SignUp"
+              "Sign Up"
             )}
           </button>
         </form>
         <p
-          className="cursor-pointer font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          className="cursor-pointer font-semibold text-indigo-600 hover:text-indigo-500"
           onClick={(e) => {
             setlogin(!islogin);
             seterrmsg(null);
           }}
         >
           {!islogin
-            ? "If you Already Have Account ? LogIn"
-            : "If You Dont Have Account ?SignUp"}
+            ? "If you already have an account? Log In"
+            : "If you don't have an account? Sign Up"}
         </p>
       </div>
     </div>

@@ -108,3 +108,70 @@ export const Signupuser = (dispatch, navigate, seterrmsg, body, setLoading) => {
         seterrmsg("User With Email or Username is already Existed");
     });
 };
+
+export const reviewSubmit = (body, id) => {
+  console.log(body, id);
+  axiosInstance
+    .post(
+      `${process.env.REACT_APP_API_URL}/api/v1/seller/product/createcomment/${id}`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((res) => {
+      console.log(res);
+      window.location.reload();
+    })
+    .catch((err) => console.log(err));
+};
+
+export const updateProfile = (body, seterr) => {
+  axiosInstance
+    .patch(`/api/v1/users/update-account`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterr("Profile Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};
+
+export const updateProfileimage = (body, seterr) => {
+  axiosInstance
+    .patch(`/api/v1/users/update-avatar`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterr("Profile Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};
+
+export const updateuserpassword = (body, seterrp) => {
+  axiosInstance
+    .post(`/api/v1/users/change-password`, body, {
+      headers: {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      seterrp("Password Succesfully Updated");
+    })
+    .catch((err) => console.log(err));
+};

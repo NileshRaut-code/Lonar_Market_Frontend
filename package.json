@@ -1,7 +1,7 @@
 {
-  "name": "blog",
+  "name": "Lonar-Markatplace",
   "version": "0.1.0",
-  "private": true, 
+  "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
     "@testing-library/jest-dom": "^5.17.0",
@@ -21,10 +21,10 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "start":"serve build -s -n -L -p $PORT",
+    "start": "serve build -s -n -L -p $PORT",
     "build": "react-scripts build",
-    "test": "react-scripts test"
-    
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

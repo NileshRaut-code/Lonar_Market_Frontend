@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loader comp/Loading";
 
-const Authadmin = ({ children, aut = true, role }) => {
+const AuthSeller = ({ children, aut = true, role }) => {
   const authstate = useSelector((store) => store?.user?.status);
   const authrole = useSelector((store) => store?.user?.data?.role);
   console.log("sttus", authstate);
@@ -12,7 +12,7 @@ const Authadmin = ({ children, aut = true, role }) => {
 
   useEffect(() => {
     console.log("sttus of if cond", role);
-    if (authstate !== aut || authrole !== "ADMIN") {
+    if (authstate !== aut || authrole !== "SELLER") {
       navigate("/login?alert=Please login to access this page");
     }
 
@@ -22,4 +22,4 @@ const Authadmin = ({ children, aut = true, role }) => {
   return loader ? <>{children}</> : <Loading />;
 };
 
-export default Authadmin;
+export default AuthSeller;
