@@ -17,7 +17,7 @@ const OrderManage = () => {
   return (
     <>
       {data && (
-        <div className="dark:bg-gray-800 bg-white">
+        <div className=" bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
           {
             <Orderlist
               data={data.filter(

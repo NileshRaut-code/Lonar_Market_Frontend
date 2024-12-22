@@ -47,7 +47,9 @@ export const getoneProduct = (id, setProductdata) => {
       //console.log(res);
       setProductdata(res.data.data);
     }) //console.log(res))
-    .catch((err) => console.log(err)); //console.log(err));
+    .catch((err) => {
+      setProductdata("Not Found");
+    }); //console.log(err));
 };
 
 export const getComments = (id, setReviewdata) => {

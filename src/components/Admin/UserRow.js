@@ -4,15 +4,15 @@ import { changeroleadmin } from "../../utils/adminutils";
 const UserRow = ({ data }) => {
   const handlerolechange = (data) => {
     console.log(data);
-
     changeroleadmin(data);
   };
+
   return (
-    <tr>
-      <td className="border-b border-gray-200 bg-white  dark:bg-gray-800 px-5 py-5 text-sm">
-        <p className="whitespace-no-wrap">3</p>
+    <tr className="bg-white hover:bg-blue-50">
+      <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+        <p className="whitespace-no-wrap text-gray-800">3</p>
       </td>
-      <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
+      <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
         <div className="flex items-center">
           <div className="h-10 w-10 flex-shrink-0">
             <img
@@ -22,17 +22,17 @@ const UserRow = ({ data }) => {
             />
           </div>
           <div className="ml-3">
-            <p className="whitespace-no-wrap dark:text-gray-200">
+            <p className="whitespace-no-wrap text-gray-800 font-medium">
               {data.fullName}
             </p>
           </div>
         </div>
       </td>
-      <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
-        <p className="whitespace-no-wrap dark:text-gray-200">{data.role}</p>
+      <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+        <p className="whitespace-no-wrap text-gray-700">{data.role}</p>
       </td>
-      <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
-        <p className="whitespace-no-wrap dark:text-gray-200">
+      <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+        <p className="whitespace-no-wrap text-gray-600">
           {new Date(data.createdAt).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
@@ -40,14 +40,14 @@ const UserRow = ({ data }) => {
           })}
         </p>
       </td>
-
-      <td className="border-b border-gray-200 bg-white dark:bg-gray-800 px-5 py-5 text-sm">
+      <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
         <button
           onClick={() => {
             handlerolechange(data);
           }}
+          className="text-indigo-600 hover:text-indigo-800 focus:outline-none"
         >
-          Change role to : {data.role === "USER" ? "SELLER" : "USER"}
+          Change role to: {data.role === "USER" ? "SELLER" : "USER"}
         </button>
       </td>
     </tr>

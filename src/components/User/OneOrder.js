@@ -1,61 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Loading from "../Loader comp/Loading";
 import { viewoneorder } from "../../utils/orderutils";
-import { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 const OneOrder = () => {
   const [orderdata, setorderedata] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+
   useEffect(() => {
     viewoneorder(id, setorderedata, navigate);
-    console.log(orderdata);
-  }, []);
+  }, [id, navigate]);
 
-  if (orderdata == null) {
+  if (!orderdata) {
     return <Loading />;
   }
+
   return (
-    <div className="w-full mx-auto p-3 sm:p-20 min-h-screen dark:bg-gray-800">
-      <h2 className="text-2xl font-bold mb-8 dark:text-gray-50">
-        Your Order : #{id.substring(0, 6)}
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100 p-8">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Your Order: #{id.substring(0, 6)}
       </h2>
 
-      {orderdata.map((item) => (
-        <div class="text-white">
-          <div class="flex flex-col sm:flex-row sm:items-center border-b border-gray-200 py-4">
-            <img
-              className="w-full sm:w-24 sm:h-24 object-cover rounded-md mr-8"
-              alt="order wala i"
-              src={
-                item?.product_id?.image === ""
-                  ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
-                  : item?.product_id?.image
-              }
-            />
-            <div class="">
-              <h2 class="text-xl p-2">
-                <span className="text-gray-500">Product Name : </span>{" "}
-                {item?.product_id?.title}
-              </h2>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        {orderdata.map((item) => (
+          <div
+            key={item._id}
+            className="flex flex-col sm:flex-row sm:items-center py-6 border-b border-gray-300"
+          >
+            {/* Product Image */}
+            <div className="w-full sm:w-32 sm:h-32 mb-4 sm:mb-0">
+              <img
+                className="w-full h-full object-cover rounded-lg"
+                src={
+                  item?.product_id?.image === ""
+                    ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
+                    : item?.product_id?.image
+                }
+                alt="Product"
+              />
+            </div>
 
-              <p class="text-l p-2">
-                <span className="text-gray-500">Price :</span> ₹{item?.price}
+            {/* Product Details */}
+            <div className="flex-1 ml-0 sm:ml-6">
+              <h3 className="text-xl text-gray-700 font-semibold mb-2">
+                {item?.product_id?.title}
+              </h3>
+              <p className="text-gray-600 text-lg mb-2">
+                <span className="font-medium">Price:</span> ₹{item?.price}
               </p>
-              <p class="text-l p-2">
-                <span className="text-gray-500">Quantity : </span>{" "}
-                {item?.quantity}
+              <p className="text-gray-600 text-lg mb-4">
+                <span className="font-medium">Quantity:</span> {item?.quantity}
               </p>
-              <Link
-                className="text-l p-3"
-                to={`/Product/${item?.product_id?._id}`}
+              <a
+                href={`/Product/${item?.product_id?._id}`}
+                className="inline-block px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
               >
                 View Product
-              </Link>
+              </a>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

@@ -6,7 +6,7 @@ const Orderlist = ({ data }) => {
     <div className="mx-auto  max-w-screen-lg px-4 py-8 sm:px-8">
       <div className="flex items-center justify-between pb-6">
         <div>
-          <h2 className="font-semibold dark:text-white text-gray-700">
+          <h2 className="font-semibold  text-gray-700">
             View All {data[0]?.status} Orders
           </h2>
         </div>

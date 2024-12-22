@@ -7,11 +7,11 @@ import Productcart from "./Productcart.js";
 const Home = () => {
   const dispatch = useDispatch();
   const allproductdata = useSelector((store) => store.products?.data);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState(allproductdata);
+  const [searchTerm, setSearchTerm] = useState();
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    if (allproductdata === null) {
+    if (allproductdata === null || allproductdata.length === 0) {
       axios
         .get(`${process.env.REACT_APP_API_URL}/api/v1/users/allproduct`)
         .then((res) => {
@@ -33,7 +33,7 @@ const Home = () => {
 
     if (keyword) {
       const filtered = allproductdata.filter(
-        (product) => product.title.toLowerCase().includes(keyword) // Assuming "name" is the product field you're searching
+        (product) => product.title.toLowerCase().includes(keyword) // Assuming "title" is the product field you're searching
       );
       setFilteredProducts(filtered);
     } else {
@@ -41,7 +41,7 @@ const Home = () => {
     }
   };
 
-  if (!allproductdata) {
+  if (!allproductdata || allproductdata.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-blue-50 via-white to-blue-50">
         {/* Hero Section with Skeleton Loader */}
@@ -151,9 +151,13 @@ const Home = () => {
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-10">
-        {filteredProducts.map((data) => (
-          <Productcart key={data._id} data={data} />
-        ))}
+        {filteredProducts && filteredProducts.length > 0 ? (
+          filteredProducts.map((data) => (
+            <Productcart key={data._id} data={data} />
+          ))
+        ) : (
+          <p>No products found.</p>
+        )}
       </div>
     </div>
   );

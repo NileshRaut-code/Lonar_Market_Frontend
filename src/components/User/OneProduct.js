@@ -17,7 +17,15 @@ const OneProduct = () => {
   return Productdata ? (
     <div className="bg-gray-100 min-h-screen">
       {/* Product Details */}
-      <OneProductcard data={Productdata} Review={Reviewdata} />
+
+      {Productdata === "Not Found" ? (
+        <div className="bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100 min-h-screen flex flex-col items-center justify-center text-gray-700">
+          <h2 className="text-3xl mb-4">NO Product FOUND</h2>
+          <p className="text-lg">Looks like Product Doesnot Exist.</p>
+        </div>
+      ) : (
+        <OneProductcard data={Productdata} Review={Reviewdata} />
+      )}
 
       {/* Customer Reviews */}
       <div className="py-10 px-16 text-2xl font-semibold text-gray-800">

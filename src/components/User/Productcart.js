@@ -18,6 +18,17 @@ const Productcart = ({ data }) => {
         <p className="text-sm text-gray-600 mt-2 line-clamp-2">
           {data.productdescription}
         </p>
+
+        {/* Shop username link */}
+        <div className="mt-2">
+          <Link
+            to={`/shop/${data.createdBy?.username}`}
+            className="text-blue-500 hover:underline text-sm"
+          >
+            {data.createdBy?.username}
+          </Link>
+        </div>
+
         <div className="flex items-center justify-between mt-4">
           <span className="text-xl font-semibold text-blue-600">
             ₹{data.price}

@@ -13,7 +13,7 @@ const Allorder = () => {
     // Skeleton loading while data is being fetched
     return (
       <div className="w-full mx-auto p-6 sm:p-20 min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
-        <h2 className="text-3xl font-semibold mb-8 text-gray-800 dark:text-gray-50 text-center">
+        <h2 className="text-3xl font-semibold mb-8 text-gray-800 ">
           Your Orders
         </h2>
 
@@ -87,7 +87,7 @@ const Allorder = () => {
 
   if (orderdata === "Not Found") {
     return (
-      <div className="bg-gradient-to-r from-gray-800 via-gray-900 to-black min-h-screen flex flex-col items-center justify-center text-white">
+      <div className="bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100 min-h-screen flex flex-col items-center justify-center text-gray-700">
         <h2 className="text-3xl mb-4">NO ORDER FOUND</h2>
         <p className="text-lg">Looks like you haven't made any orders yet.</p>
       </div>
@@ -96,7 +96,7 @@ const Allorder = () => {
 
   return (
     <div className="w-full mx-auto p-6 sm:p-20 min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
-      <h2 className="text-3xl font-semibold mb-8 text-gray-800 dark:text-gray-50 text-center">
+      <h2 className="text-3xl font-semibold mb-8 text-gray-800 ">
         Your Orders
       </h2>
 
