@@ -31,14 +31,21 @@ const Home = () => {
               <p className="text-lg md:text-xl">{data?.email}</p>
             </div>
 
-            <div className="flex flex-col items-center p-2 mt-2 md:mt-8">
+   <div className="flex flex-row gap-6 items-center p-2 mt-2 md:mt-8">
               <Link
-                className="text-white bg-gradient-to-r from-blue-600 via-pink-600 to-purple-600 p-5 rounded-lg mt-2 hover:from-blue-700 hover:via-pink-700 hover:to-purple-700 transition"
+                className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  me-2 mb-2"
                 to={"/dashboard/orders"}
               >
                 Manage The Orders
               </Link>
+              <Link
+                className="text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  me-2 mb-2"
+                to={"/dashboard/sales"}
+              >
+                View The Sales
+              </Link>
             </div>
+                  
           </div>
 
           {/* Right Side: Add Product Section */}
