@@ -9,7 +9,49 @@ const OneProductcard = (data, totalReviews, averageRating) => {
   const logstate = useSelector((store) => store.user.status);
   const loguser = useSelector((store) => store.user.data);
   const productdetail = data.data;
+  const [pincode, setPincode] = useState("");
+  const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState(""); // To store success or error message
+  const [loading, setLoading] = useState(false);
+  // Regex for validating Indian Pincode (6 digits)
 
+  
+  const pincodeRegex = /^[1-9][0-9]{5}$/;
+
+  // Handle input change
+  const handlePincodeInputChange = (e) => {
+    const value = e.target.value;
+    setPincode(value);
+
+    // Validate pincode
+    if (pincodeRegex.test(value)) {
+      setIsValid(true);  // Enable the button if valid
+    } else {
+      setIsValid(false);  // Disable the button if invalid
+    }
+  };
+
+  // Handle button click and check pincode
+  const handleCheckClick = () => {
+    // Reset the message when button is clicked again
+    if (message !== "") {
+      setMessage(""); // Clear message if clicked again
+     
+    }
+
+    // Show spinner
+    setLoading(true);
+
+    // Simulate an API call or validation check
+    setTimeout(() => {
+      if (pincode === "100000") {
+        setMessage("Sorry, delivery is not available for this pincode.");
+      } else {
+        setMessage("Delivery is available for this pincode.");
+      }
+      setLoading(false); // Hide the spinner after the check
+    }, 2000); // Simulate a delay for processing
+  };
   const dispatch = useDispatch();
   const [showReviewModal, setShowReviewModal] = useState(false);
 
@@ -76,14 +118,37 @@ const OneProductcard = (data, totalReviews, averageRating) => {
               </div>
 
               <div className="flex items-center mb-4">
-                <span className="text-lg font-semibold text-gray-600 line-through">
-                  {productdetail.originalPrice}
-                </span>
-                <span className="text-2xl font-bold text-red-600 ml-2">
-                  {productdetail.price}
-                </span>
-                <span className="text-sm text-gray-500 ml-2">90% off</span>
-              </div>
+  {/* If both originalPrice and price exist */}
+  {productdetail.originalPrice && productdetail.price ? (
+    <>
+      <span className="text-lg font-semibold text-gray-600 line-through">
+        {productdetail.originalPrice}
+      </span>
+      <span className="text-2xl font-bold text-red-600 ml-2">
+        {productdetail.price}
+      </span>
+      <span className="text-sm text-gray-500 ml-2">
+        {((productdetail.originalPrice - productdetail.price) / productdetail.originalPrice * 100).toFixed(0)}% off
+      </span>
+    </>
+  ) : (
+    // If only price is available, calculate originalPrice and assume 25% off
+    productdetail.price && (
+      <>
+        <span className="text-lg font-semibold text-gray-600 line-through">
+          {(productdetail.price * 1.25).toFixed(2)}
+        </span>
+        <span className="text-2xl font-bold text-red-600 ml-2">
+          {productdetail.price}
+        </span>
+        <span className="text-sm text-gray-500 ml-2">
+          25% off
+        </span>
+      </>
+    )
+  )}
+</div>
+
 
               <div className="flex space-x-4 mb-6">
                 {/* Add to Cart Button */}
@@ -120,16 +185,38 @@ const OneProductcard = (data, totalReviews, averageRating) => {
               </div>
 
               {/* Pincode Section */}
-              <div className="flex items-center mb-4">
-                <input
-                  type="text"
-                  placeholder="Enter delivery pincode"
-                  className="border-2 border-gray-300 rounded-lg py-2 px-4 w-full"
-                />
-                <button className="ml-4 px-6 py-2 bg-gray-300 text-gray-700 rounded-lg">
-                  Check
-                </button>
-              </div>
+              <div className="max-w-md mx-auto">
+      <div className="flex items-center mb-4">
+        <input
+          type="text"
+          placeholder="Enter delivery pincode"
+          value={pincode}
+          onChange={handlePincodeInputChange}
+          className="border-2 border-gray-300 rounded-lg py-2 px-4 w-full"
+          maxLength={6}  // Ensure no more than 6 characters can be entered
+        />
+        <button
+          className={`ml-4 px-6 py-2 rounded-lg ${isValid ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-700"}`}
+          disabled={!isValid || loading} // Disable button if invalid or loading
+          onClick={handleCheckClick}
+        >
+          {loading ? (
+            <div className=" w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin"></div> // Tailwind spinner
+          ) : (
+            "Check"
+          )}
+        </button>
+      </div>
+
+      {/* Display the message below the input */}
+      {message && (
+        <div
+          className={`mt-4 text-lg ${message.includes("Sorry, delivery is not available for this pincode.") ? "text-red-600" : "text-green-600"}`}
+        >
+          {message}
+        </div>
+      )}
+    </div>
 
               {/* Add Review Button */}
               {logstate && (

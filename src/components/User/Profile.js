@@ -5,6 +5,8 @@ import {
   updateProfileimage,
   updateuserpassword,
 } from "../../utils/userutils";
+import { CiEdit } from "react-icons/ci";
+
 
 export const Profile = () => {
   const data = useSelector((store) => store.user.data);
@@ -273,20 +275,7 @@ export const Profile = () => {
           className="absolute top-4 right-4 p-2 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300"
           onClick={() => setedit(true)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 2L19 8M18 6L14 10M14 14H6V6H14V14Z"
-            />
-          </svg>
+          <CiEdit/>
         </button>
 
         {/* Left Column - User Info */}
@@ -350,8 +339,20 @@ export const Profile = () => {
               Address
             </label>
             <p className="mt-2 text-lg text-gray-800 w-2/3 break-words">
-              {data.phoneno || "Some address example"}
-            </p>
+  {(data.address || 
+    `Pune, Maharashtra
+    District: Pune
+    Pin Code: 411001
+    India`)
+    .split("\n")
+    .map((line, index) => (
+      <span key={index}>
+        {line}
+        <br /> {/* This will create a new line */}
+      </span>
+    ))}
+</p>
+
           </div>
         </div>
       </div>

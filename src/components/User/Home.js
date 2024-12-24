@@ -61,7 +61,7 @@ const Home = () => {
         </div>
 
         {/* Skeleton Loader for Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 py-10">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
@@ -150,7 +150,7 @@ const Home = () => {
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6 py-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 py-10">
         {filteredProducts && filteredProducts.length > 0 ? (
           filteredProducts.map((data) => (
             <Productcart key={data._id} data={data} />
