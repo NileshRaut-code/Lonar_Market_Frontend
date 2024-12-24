@@ -194,7 +194,7 @@ const SalesDash = () => {
   };
 
   return (
-    <div className="p-8 space-y-6 bg-gray-50 min-h-screen">
+    <div className="p-8 space-y-6 bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100  min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-semibold text-gray-800">Sales Dashboard</h1>
