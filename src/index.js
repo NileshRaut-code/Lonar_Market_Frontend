@@ -24,6 +24,7 @@ import Editproduct from "./components/Seller/Editproduct.js";
 import Allorder from "./components/User/Allorder.js";
 import OneOrder from "./components/User/OneOrder.js";
 import OrderManage from "./components/Seller/OrderManage.js";
+import SalesDash from "./components/Seller/SalesDash.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -46,6 +47,14 @@ const routes = createBrowserRouter([
         element: (
           <AuthSeller aut={true} role={"SELLER"}>
             <DashBoard />
+          </AuthSeller>
+        ),
+      },
+      {
+        path: "/dashboard/sales",
+        element: (
+          <AuthSeller aut={true} role={"SELLER"}>
+            <SalesDash />
           </AuthSeller>
         ),
       },
