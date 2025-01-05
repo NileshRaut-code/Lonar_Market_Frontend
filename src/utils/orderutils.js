@@ -14,7 +14,7 @@ export const createorder = (body, navigate,setpaymentModel,setpaymentOrderid) =>
     })
     .then((res) => {
       // setTimeout(() => {
-        console.log(res.data.data);
+        console.log(res.data.data[0].payment_mode);
         if(res.data.data[0].payment_mode==="CREDITCARD"){
           setpaymentOrderid(res.data.data[0]._id)
           setpaymentModel(true);
@@ -28,7 +28,7 @@ export const createorder = (body, navigate,setpaymentModel,setpaymentOrderid) =>
 };
 
 
-export const paymentOrderid = (body,navigate) => {
+export const paymentOrder = (body,navigate) => {
   axiosInstance
     .post(`/api/v1/orders/verify`, body, {
       headers: {

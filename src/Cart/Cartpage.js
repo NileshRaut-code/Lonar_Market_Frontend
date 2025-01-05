@@ -1,13 +1,14 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createorder } from "../utils/orderutils";
+import { createorder,paymentOrder } from "../utils/orderutils";
 
 export const Cartpage = () => {
   const cart = useSelector((state) => state.cart);
   const userstste = useSelector((store) => store.user.status);
   const navigate = useNavigate();
   const [orderloader, Setorderloader] = useState(true);
+  const [paymentloader, Setpaymentloader] = useState(true);
   const address = useRef(null);
   const pincode = useRef(null);
   const payment_mode = useRef(null);
@@ -51,9 +52,10 @@ export const Cartpage = () => {
   };
 
   const handlepayment=()=>{
+    Setpaymentloader(false)
     const data={orderId:paymentOrderid};
     const body = JSON.stringify(data);
-    paymentOrderid(body,navigate)
+    paymentOrder(body,navigate)
   }
 
 
@@ -104,7 +106,7 @@ export const Cartpage = () => {
                 className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
               >
                 {orderloader ? (
-                  "Checkout"
+                  "Order Checkout"
                 ) : (
                   <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
                 )}
@@ -156,17 +158,60 @@ export const Cartpage = () => {
           </div>
         )}
       </div>
-      {paymentModel && <div>
-         
-         <input ref={cardno} placeholder="Card No" />
-         <input ref={cardcvv} placeholder="cvv" />
-         <input ref={cardname} placeholder="Name" />
-         <input ref={cardexp} placeholder="exp" />
+      {paymentModel && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Complete Payment</h2>
+      
+      <div className="mb-6">
+        <input
+          ref={cardno}
+          type="text"
+          placeholder="Card Number"
+          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+        />
+      </div>
 
-         <button onClick={handlepayment}>Complete Payment</button>
-         {/* <input ref={card} placeholder="card" /> */}
-          
-        </div>}
+      <div className="mb-6 grid grid-cols-2 gap-4">
+        <input
+          ref={cardcvv}
+          type="text"
+          placeholder="CVV"
+          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+        />
+        <input
+          ref={cardexp}
+          type="text"
+          placeholder="Expiry Date (MM/YY)"
+          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+        />
+      </div>
+
+      <div className="mb-6">
+        <input
+          ref={cardname}
+          type="text"
+          placeholder="Cardholder Name"
+          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+        />
+      </div>
+
+      <div className="flex justify-center">
+        <button
+          onClick={handlepayment}
+          className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+          >
+          {orderloader ? (
+                  "Complete Payment"
+                ) : (
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
+                )}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
 
  
