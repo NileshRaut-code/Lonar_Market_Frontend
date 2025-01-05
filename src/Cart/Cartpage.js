@@ -13,6 +13,7 @@ export const Cartpage = () => {
   const pincode = useRef(null);
   const payment_mode = useRef(null);
   const [err, seterr] = useState(null);
+  const [paymenterr, setpaymenterr] = useState(null);
   const [paymentModel,setpaymentModel]=useState(false);
   const cardno = useRef(null);
   const cardcvv= useRef(null);
@@ -52,7 +53,29 @@ export const Cartpage = () => {
   };
 
   const handlepayment=()=>{
-    Setpaymentloader(false)
+    setpaymenterr("");
+    if (!cardno.current.value && cardno.current.value.length !== 16){
+      Setpaymentloader(true)
+      setpaymenterr("Card Number must be 16 digit");
+      return;
+    }
+    if (!cardcvv.current.value && cardcvv.current.value.length !== 3){
+      Setpaymentloader(true)
+      setpaymenterr("card cvv must be 3 digit");
+      return;
+    }
+    if (!cardexp.current.value && !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardexp.current.value)){
+      Setpaymentloader(true)
+      setpaymenterr("Card Expiry Date must be MM/YY format");
+      return;
+    }
+    if (!cardname.current.value){
+      setpaymenterr("Card Holder Name is required");
+      Setpaymentloader(true)
+      return;
+    }
+    
+   Setpaymentloader(false)
     const data={orderId:paymentOrderid};
     const body = JSON.stringify(data);
     paymentOrder(body,navigate)
@@ -195,13 +218,20 @@ export const Cartpage = () => {
           className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
         />
       </div>
-
+        <div className="mb-6">   <p
+              className={`mb-4 text-sm text-red-800 rounded-lg bg-red-50 p-4 ${
+                paymenterr ? "" : "hidden"
+              }`}
+              role="alert"
+            >
+              {paymenterr}
+            </p> </div>
       <div className="flex justify-center">
         <button
           onClick={handlepayment}
           className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
           >
-          {orderloader ? (
+          {paymentloader ? (
                   "Complete Payment"
                 ) : (
                   <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
