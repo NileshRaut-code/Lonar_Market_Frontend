@@ -12,7 +12,12 @@ export const Cartpage = () => {
   const pincode = useRef(null);
   const payment_mode = useRef(null);
   const [err, seterr] = useState(null);
-
+  const [paymentModel,setpaymentModel]=useState(false);
+  const cardno = useRef(null);
+  const cardcvv= useRef(null);
+  const cardname = useRef(null);
+  const cardexp = useRef(null);
+  const [paymentOrderid,setpaymentOrderid]=useState(null);
   // Calculate total price
   const totalPrice = cart.products.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -42,8 +47,15 @@ export const Cartpage = () => {
     };
     console.log(data);
     const body = JSON.stringify(data);
-    createorder(body, navigate);
+    createorder(body, navigate ,setpaymentModel,setpaymentOrderid);
   };
+
+  const handlepayment=()=>{
+    const data={orderId:paymentOrderid};
+    const body = JSON.stringify(data);
+    paymentOrderid(body,navigate)
+  }
+
 
   return (
     <div className="w-full mx-auto p-8 min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
@@ -144,6 +156,19 @@ export const Cartpage = () => {
           </div>
         )}
       </div>
+      {paymentModel && <div>
+         
+         <input ref={cardno} placeholder="Card No" />
+         <input ref={cardcvv} placeholder="cvv" />
+         <input ref={cardname} placeholder="Name" />
+         <input ref={cardexp} placeholder="exp" />
+
+         <button onClick={handlepayment}>Complete Payment</button>
+         {/* <input ref={card} placeholder="card" /> */}
+          
+        </div>}
     </div>
+
+ 
   );
 };

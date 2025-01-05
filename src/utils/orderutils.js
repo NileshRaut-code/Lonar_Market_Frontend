@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   withCredentials: true, // Set withCredentials at the instance level
 });
 
-export const createorder = (body, navigate) => {
+export const createorder = (body, navigate,setpaymentModel,setpaymentOrderid) => {
   axiosInstance
     .post(`/api/v1/orders/create-order`, body, {
       headers: {
@@ -13,14 +13,42 @@ export const createorder = (body, navigate) => {
       },
     })
     .then((res) => {
-      setTimeout(() => {
+      // setTimeout(() => {
         console.log(res.data.data);
-        navigate(`/order`);
-      }, 3000);
-    })
+        if(res.data.data[0].payment_mode==="CREDITCARD"){
+          setpaymentOrderid(res.data.data[0]._id)
+          setpaymentModel(true);
+        }
+        else{
+          navigate(`/order`);
+        }
+    //   }, 1000);
+     })
     .catch((err) => console.log(err));
 };
 
+
+export const paymentOrderid = (body,navigate) => {
+  axiosInstance
+    .post(`/api/v1/orders/verify`, body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+       setTimeout(() => {
+        console.log(res.data.data);
+        // if(res.data.data[0].payment_mode==="CREDITCARD"){
+        //   setpaymentOrderid(res.data.data[0]._id)
+        //   setpaymentModel(true);
+        // }
+        // else{
+          navigate(`/order`);
+        // }
+   }, 1000);
+     })
+    .catch((err) => console.log(err));
+};
 export const viewoneorder = (id, setorderedata, navigate) => {
   axiosInstance
     .get(`/api/v1/orders/view-order/${id}`)
