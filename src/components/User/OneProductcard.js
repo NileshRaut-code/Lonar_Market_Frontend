@@ -1,56 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../../utils/cartSlice";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddReview from "./AddReview";
-
 const OneProductcard = (data, totalReviews, averageRating) => {
   const logstate = useSelector((store) => store.user.status);
   const loguser = useSelector((store) => store.user.data);
   const productdetail = data.data;
   const [pincode, setPincode] = useState("");
   const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState(""); // To store success or error message
+  const [message, setMessage] = useState(""); 
   const [loading, setLoading] = useState(false);
-  // Regex for validating Indian Pincode (6 digits)
-
+  const navigate = useNavigate();
   
   const pincodeRegex = /^[1-9][0-9]{5}$/;
 
-  // Handle input change
   const handlePincodeInputChange = (e) => {
     const value = e.target.value;
     setPincode(value);
-
-    // Validate pincode
     if (pincodeRegex.test(value)) {
-      setIsValid(true);  // Enable the button if valid
+      setIsValid(true);   
     } else {
-      setIsValid(false);  // Disable the button if invalid
+      setIsValid(false); 
     }
   };
 
-  // Handle button click and check pincode
   const handleCheckClick = () => {
-    // Reset the message when button is clicked again
     if (message !== "") {
-      setMessage(""); // Clear message if clicked again
+      setMessage(""); 
      
     }
 
-    // Show spinner
     setLoading(true);
 
-    // Simulate an API call or validation check
     setTimeout(() => {
       if (pincode === "100000") {
         setMessage("Sorry, delivery is not available for this pincode.");
       } else {
         setMessage("Delivery is available for this pincode.");
       }
-      setLoading(false); // Hide the spinner after the check
-    }, 2000); // Simulate a delay for processing
+      setLoading(false);  
+    }, 2000); 
   };
   const dispatch = useDispatch();
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -132,7 +122,6 @@ const OneProductcard = (data, totalReviews, averageRating) => {
       </span>
     </>
   ) : (
-    // If only price is available, calculate originalPrice and assume 25% off
     productdetail.price && (
       <>
         <span className="text-lg font-semibold text-gray-600 line-through">
@@ -170,9 +159,21 @@ const OneProductcard = (data, totalReviews, averageRating) => {
                 <button className="w-full bg-blue-500 text-white py-3 rounded-full font-semibold shadow-md hover:bg-blue-600">
                   Buy Now
                 </button>
+
+                {/* Edit Button */}
+                {logstate &&
+                  loguser &&
+                  productdetail.createdBy &&
+                  loguser._id === productdetail.createdBy._id && (
+                    <button
+                      onClick={() => navigate(`/product/edit/${productdetail._id}`)}
+                      className="w-full bg-green-500 text-white py-3 rounded-full font-semibold shadow-md hover:bg-green-600"
+                    >
+                      Edit Product
+                    </button>
+                  )}
               </div>
 
-              {/* Available Offers */}
               <div className="space-y-2 mb-6 text-sm text-gray-600">
                 <div>
                   Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit
@@ -184,7 +185,6 @@ const OneProductcard = (data, totalReviews, averageRating) => {
                 <div>Special Price: Get at flat ₹489</div>
               </div>
 
-              {/* Pincode Section */}
               <div className="max-w-md mx-auto">
       <div className="flex items-center mb-4">
         <input
@@ -193,22 +193,21 @@ const OneProductcard = (data, totalReviews, averageRating) => {
           value={pincode}
           onChange={handlePincodeInputChange}
           className="border-2 border-gray-300 rounded-lg py-2 px-4 w-full"
-          maxLength={6}  // Ensure no more than 6 characters can be entered
+          maxLength={6} 
         />
         <button
           className={`ml-4 px-6 py-2 rounded-lg ${isValid ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-700"}`}
-          disabled={!isValid || loading} // Disable button if invalid or loading
+          disabled={!isValid || loading} 
           onClick={handleCheckClick}
         >
           {loading ? (
-            <div className=" w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin"></div> // Tailwind spinner
+            <div className=" w-6 h-6 border-4 border-t-4 border-gray-300 border-solid rounded-full animate-spin"></div> 
           ) : (
             "Check"
           )}
         </button>
       </div>
 
-      {/* Display the message below the input */}
       {message && (
         <div
           className={`mt-4 text-lg ${message.includes("Sorry, delivery is not available for this pincode.") ? "text-red-600" : "text-green-600"}`}
@@ -218,7 +217,6 @@ const OneProductcard = (data, totalReviews, averageRating) => {
       )}
     </div>
 
-              {/* Add Review Button */}
               {logstate && (
                 <button
                   onClick={handleAddReview}
@@ -232,8 +230,7 @@ const OneProductcard = (data, totalReviews, averageRating) => {
         </div>
       </div>
 
-      {/* Add Review Modal */}
-      {logstate && (
+        {logstate && (
         <div>
           {showReviewModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
