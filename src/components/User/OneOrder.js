@@ -89,7 +89,7 @@ const OneOrder = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-2">Shipping Address</h3>
-                  <p className="text-gray-600">{address.address}, {address.city}, {address.state} - {address.pincode}</p>
+                  <p className="text-gray-600">{address}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-2">Order Date</h3>
