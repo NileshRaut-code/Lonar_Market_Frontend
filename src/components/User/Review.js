@@ -1,48 +1,40 @@
 import React from "react";
 import StarRating from "./StarRating";
 
-const Review = (reviewdata) => {
-  console.log(reviewdata);
+const Review = ({ data }) => {
+  if (!data) {
+    return null;  
+  }
+
+  const { createdBy, rating, review_comment, createdAt } = data;
+
+  const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
-    <div className="bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Review Card */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden p-6 mb-6">
-          <div className="flex items-start space-x-4">
-            {/* User Image */}
-            <div className="flex-shrink-0">
-              <img
-                className="h-12 w-12 rounded-full border-2 border-gray-300"
-                src={reviewdata?.data?.createdBy?.avatar} // Replace with the URL of the user's avatar image
-                alt="User Avatar"
-              />
+    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
+      <div className="flex items-start space-x-4">
+        <img
+          className="h-12 w-12 rounded-full object-cover"
+          src={createdBy?.avatar || 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg'} // Fallback avatar
+          alt={`${createdBy?.fullName}'s avatar`}
+        />
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-md font-semibold text-gray-800">{createdBy?.fullName}</h4>
+              <p className="text-xs text-gray-500">Posted on {formattedDate}</p>
             </div>
-            {/* User Details */}
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {reviewdata?.data?.createdBy?.fullName}
-              </h3>
-              <div className="flex items-center space-x-2 mt-1">
-                <StarRating rating={reviewdata?.data?.rating} />
-                <span className="text-sm text-gray-500">
-                  {reviewdata?.data?.rating} Stars
-                </span>
-              </div>
+            <div className="flex items-center">
+              <StarRating rating={rating} />
             </div>
           </div>
-
-          {/* Comment Text */}
-          <div className="mt-4">
-            <p className="text-gray-700 text-base leading-relaxed">
-              {reviewdata.data.review_comment}
-            </p>
-          </div>
-
-          {/* Comment Date (Optional) */}
-          <div className="mt-4 text-sm text-gray-500">
-            <p>{reviewdata?.data?.createdAt}</p>{" "}
-            {/* You can format the date if needed */}
-          </div>
+          <p className="mt-4 text-gray-600 text-sm leading-relaxed">
+            {review_comment}
+          </p>
         </div>
       </div>
     </div>

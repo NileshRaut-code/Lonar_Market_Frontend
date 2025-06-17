@@ -1,81 +1,96 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import { sellermanageorder } from "../../utils/sellerutils";
 
+
+const StatusBadge = ({ status }) => {
+  const statusClasses = {
+    "ORDERED BUT PENDING TO DISPATCH": "bg-yellow-100 text-yellow-800",
+    "DISPATCH": "bg-blue-100 text-blue-800",
+    "DELIVERED": "bg-green-100 text-green-800",
+    "CANCLED": "bg-red-100 text-red-800",
+  };
+
+  const statusText = {
+    "ORDERED BUT PENDING TO DISPATCH": "Pending",
+    "DISPATCH": "Dispatched",
+    "DELIVERED": "Delivered",
+    "CANCLED": "Canceled",
+  };
+
+  return (
+    <span
+      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+        statusClasses[status] || "bg-gray-100 text-gray-800"
+      }`}
+    >
+      {statusText[status] || status}
+    </span>
+  );
+};
+
 const OrderRow = ({ data }) => {
-  const status = useRef(null);
-  const handlerolechange = (status, _id) => {
-    console.log(status.current.value, _id);
-    if (
-      status.current.value == null ||
-      status.current.value == "" ||
-      _id == null
-    ) {
-      console.log("required value to edit");
+  const [newStatus, setNewStatus] = useState("");
+
+  const handleStatusChange = () => {
+    if (!newStatus || !data._id) {
+      console.log("Required value to edit");
       return;
     }
-    const data = { _id: _id, status: status.current.value };
-    const body = JSON.stringify(data);
-    console.log(data);
+    const body = JSON.stringify({ _id: data._id, status: newStatus });
     sellermanageorder(body);
   };
+
+  const availableStatuses = {
+    "ORDERED BUT PENDING TO DISPATCH": ["DISPATCH", "CANCLED"],
+    "DISPATCH": ["DELIVERED", "CANCLED"],
+  };
+
+  const possibleStatusChanges = availableStatuses[data.status] || [];
+
   return (
-    <tr className="text-gray-800">
-      <td className="border-b border-gray-200 bg-white   px-5 py-5 text-sm">
-        <p className="whitespace-no-wrap">{data?._id.substring(0, 6)}</p>
+    <tr className="bg-white border-b hover:bg-gray-50">
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+        #{data?._id.substring(0, 6)}...
       </td>
-      <td className="border-b border-gray-200 bg-white font-medium  px-5 py-5 text-sm">
-        {data?.productDetails?.title.substring(0, 12)}..
+      <td className="px-6 py-4">{data?.productDetails?.title}</td>
+      <td className="px-6 py-4 text-center">{data?.quantity}</td>
+      <td className="px-6 py-4">₹{data?.price.toLocaleString('en-IN')}</td>
+      <td className="px-6 py-4">₹{(data.price * data.quantity).toLocaleString('en-IN')}</td>
+      <td className="px-6 py-4">
+        <StatusBadge status={data?.status} />
       </td>
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        {data?.quantity}
+      <td className="px-6 py-4">
+        {new Date(data.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        })}
       </td>
-
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        {data?.price}
-      </td>
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        {data.price * data.quantity}
-      </td>
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        {data?.status}
-      </td>
-
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        <p className="whitespace-no-wrap text-gray-600">
-          {new Date(data.createdAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </p>
-      </td>
-      <td className="border-b border-gray-200 bg-white  px-5 py-5 text-sm">
-        {data.status === "DISPATCH" ||
-        data.status === "ORDERED BUT PENDING TO DISPATCH" ? (
-          <div>
-            <select ref={status}>
-              {data.status === "DISPATCH" && (
-                <option value={""}>ORDERED</option>
-              )}
-
-              {data.status === "ORDERED BUT PENDING TO DISPATCH" && (
-                <option value={"DISPATCH"}>DISPATCH</option>
-              )}
-
-              <option value={"CANCLED"}>CANCELLED</option>
-              <option>DELIVERED</option>
-            </select>
-
-            <button
-              onClick={() => {
-                handlerolechange(status, data._id);
-              }}
+      <td className="px-6 py-4">
+        {possibleStatusChanges.length > 0 ? (
+          <div className="flex items-center space-x-2">
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500"
             >
-              Submit
+              <option value="">Select Status</option>
+              {possibleStatusChanges.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleStatusChange}
+              disabled={!newStatus}
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              Update
             </button>
           </div>
         ) : (
-          <p>No Edit</p>
+          <span className="text-gray-400">No actions</span>
         )}
       </td>
     </tr>

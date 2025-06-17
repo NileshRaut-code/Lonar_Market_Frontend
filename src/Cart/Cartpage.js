@@ -1,249 +1,237 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createorder,paymentOrder } from "../utils/orderutils";
+import { createCodOrder, createRazorpayOrder, verifyOnlinePayment } from "../utils/orderutils.js";
 
 export const Cartpage = () => {
   const cart = useSelector((state) => state.cart);
   const userstste = useSelector((store) => store.user.status);
   const navigate = useNavigate();
   const [orderloader, Setorderloader] = useState(true);
-  const [paymentloader, Setpaymentloader] = useState(true);
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState("COD");
   const address = useRef(null);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      const scripts = document.querySelectorAll('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+      scripts.forEach(s => document.body.removeChild(s));
+    };
+  }, []);
   const pincode = useRef(null);
-  const payment_mode = useRef(null);
   const [err, seterr] = useState(null);
-  const [paymenterr, setpaymenterr] = useState(null);
-  const [paymentModel,setpaymentModel]=useState(false);
-  const cardno = useRef(null);
-  const cardcvv= useRef(null);
-  const cardname = useRef(null);
-  const cardexp = useRef(null);
-  const [paymentOrderid,setpaymentOrderid]=useState(null);
-  // Calculate total price
+
   const totalPrice = cart.products.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
-  const orderhandler = () => {
-    Setorderloader(false);
+  const orderhandler = async () => {
     if (userstste === false) {
       navigate("/login");
-    }
-
-    if (
-      !address.current.value ||
-      !payment_mode.current.value ||
-      !pincode.current.value
-    ) {
-      Setorderloader(true);
-      seterr("All details are required");
       return;
     }
-    const data = {
+
+    if (!address.current.value || !pincode.current.value) {
+      seterr("Address and Pincode are required.");
+      return;
+    }
+    seterr(null);
+    Setorderloader(false);
+
+    const orderDetails = {
       products: cart.products,
       address: address.current.value,
-      payment_mode: payment_mode.current.value,
       pincode: parseInt(pincode.current.value),
     };
-    console.log(data);
-    const body = JSON.stringify(data);
-    createorder(body, navigate ,setpaymentModel,setpaymentOrderid);
+
+    if (selectedPaymentMode === "COD") {
+      try {
+        await createCodOrder(JSON.stringify({ ...orderDetails, payment_mode: "COD" }));
+        navigate('/order');
+      } catch (error) {
+        seterr('Failed to place COD order. Please try again.');
+        Setorderloader(true); 
+      }
+      return;
+    }
+
+    if (selectedPaymentMode === "ONLINE") {
+      try {
+        
+        const razorpayOrderResponse = await createRazorpayOrder(JSON.stringify({ products: cart.products }));
+        const razorpayOrder = razorpayOrderResponse.data;
+
+        const options = {
+          key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
+          name: "Lonar MarkatePlace",
+          description: "Complete Your Purchase",
+          order_id: razorpayOrder.id,
+          handler: async function (paymentResponse) {
+            const verificationData = {
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+              ...orderDetails, 
+            };
+
+            try {
+              const verificationResult = await verifyOnlinePayment(JSON.stringify(verificationData));
+              if (verificationResult.data.verified) {
+                navigate("/order");
+              } else {
+                seterr("Payment verification failed. Please try again.");
+                Setorderloader(true);
+              }
+            } catch (error) {
+                seterr("An error occurred during payment verification.");
+                Setorderloader(true);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              seterr("Payment was cancelled.");
+              Setorderloader(true);
+            },
+          },
+          prefill: {
+            name: "Customer Name",
+            email: "customer.email@example.com",
+            contact: "9999999999",
+          },
+          notes: {
+            address: "Customer Address",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const rzp1 = new window.Razorpay(options);
+        rzp1.on('payment.failed', function (response){
+            seterr(`Payment failed: ${response.error.description}`);
+            Setorderloader(true);   
+        });
+        rzp1.open();
+
+      } catch (error) {
+        seterr("Could not connect to payment gateway. Please try again.");
+        Setorderloader(true);   
+      }
+    }
   };
 
-  const handlepayment=()=>{
-    setpaymenterr("");
-    if (!cardno.current.value && cardno.current.value.length !== 16){
-      Setpaymentloader(true)
-      setpaymenterr("Card Number must be 16 digit");
-      return;
-    }
-    if (!cardcvv.current.value && cardcvv.current.value.length !== 3){
-      Setpaymentloader(true)
-      setpaymenterr("card cvv must be 3 digit");
-      return;
-    }
-    if (!cardexp.current.value && !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardexp.current.value)){
-      Setpaymentloader(true)
-      setpaymenterr("Card Expiry Date must be MM/YY format");
-      return;
-    }
-    if (!cardname.current.value){
-      setpaymenterr("Card Holder Name is required");
-      Setpaymentloader(true)
-      return;
-    }
-    
-   Setpaymentloader(false)
-    const data={orderId:paymentOrderid};
-    const body = JSON.stringify(data);
-    paymentOrder(body,navigate)
-  }
-
-
   return (
-    <div className="w-full mx-auto p-8 min-h-screen bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Your Cart
-      </h2>
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
+          Shopping Cart
+        </h1>
         {cart.products.length === 0 ? (
-          <p className="text-gray-600 text-center">Your cart is empty</p>
+          <div className="text-center py-10 px-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-xl font-medium text-gray-700">Your cart is empty</h2>
+            <p className="text-gray-500 mt-2">Looks like you haven't added anything to your cart yet.</p>
+            <button onClick={() => navigate('/')} className="mt-6 inline-block bg-indigo-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Continue Shopping
+            </button>
+          </div>
         ) : (
-          <div>
-            {cart.products.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center border-b border-gray-200 py-4 hover:bg-gray-100 transition duration-200 ease-in-out"
-              >
-                <img
-                  src={
-                    item.image === ""
-                      ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
-                      : item.image
-                  }
-                  alt="Product cart"
-                  className="w-24 h-24 object-cover rounded-md mr-8 shadow-lg"
-                />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {item.name}
-                  </h3>
-                  <p className="text-gray-500 mb-2">
-                    Quantity: {item.quantity}
-                  </p>
-                  <p className="text-gray-500">
-                    Price: ₹ {item.price * item.quantity}
-                  </p>
+          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg shadow-md">
+                <ul className="divide-y divide-gray-200">
+                  {cart.products.map((item) => (
+                    <li key={item.id} className="p-4 sm:p-6 flex items-start space-x-4">
+                      <img
+                        src={item.image || "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"}
+                        alt={item.name}
+                        className="w-20 h-20 rounded-md object-cover"
+                      />
+                      <div className="flex-1">
+                        <h3 className="text-lg font-medium text-gray-800">{item.name}</h3>
+                        <p className="text-sm text-gray-500 mt-1">Quantity: {item.quantity}</p>
+                        <p className="text-lg font-semibold text-gray-900 mt-2">
+                          ₹{item.price * item.quantity}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-8 lg:mt-0 lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold text-gray-800 border-b pb-4">
+                  Order Summary
+                </h2>
+                <div className="flex justify-between items-center my-4">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-semibold text-gray-900">₹{totalPrice}</span>
+                </div>
+                <div className="border-t pt-4">
+                  <div className="flex justify-between items-center font-bold text-lg">
+                    <span>Total</span>
+                    <span>₹{totalPrice}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium text-gray-900">Delivery Details</h3>
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <label htmlFor="address" className="sr-only">Address</label>
+                      <input type="text" ref={address} id="address" placeholder="Full Address" className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"/>
+                    </div>
+                    <div>
+                      <label htmlFor="pincode" className="sr-only">Pincode</label>
+                      <input type="text" ref={pincode} id="pincode" placeholder="Pincode" maxLength="6" className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium text-gray-900">Payment Method</h3>
+                  <div className="mt-4 space-y-4">
+                    <div className="flex items-center">
+                      <input id="cod" name="payment-type" type="radio" value="COD" checked={selectedPaymentMode === 'COD'} onChange={(e) => setSelectedPaymentMode(e.target.value)} className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"/>
+                      <label htmlFor="cod" className="ml-3 block text-sm font-medium text-gray-700">Cash on Delivery</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input id="online" name="payment-type" type="radio" value="ONLINE" checked={selectedPaymentMode === 'ONLINE'} onChange={(e) => setSelectedPaymentMode(e.target.value)} className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"/>
+                      <label htmlFor="online" className="ml-3 block text-sm font-medium text-gray-700">Pay Online with Razorpay</label>
+                    </div>
+                  </div>
+                </div>
+
+                {err && (
+                  <p className="mt-4 text-sm text-red-600 bg-red-50 p-3 rounded-md">{err}</p>
+                )}
+
+                <div className="mt-6">
+                  <button
+                    onClick={orderhandler}
+                    disabled={!orderloader}
+                    className="w-full bg-indigo-600 text-white py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    {orderloader ? (
+                      selectedPaymentMode === "COD" ? "Place Order" : "Proceed to Pay"
+                    ) : (
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    )}
+                  </button>
                 </div>
               </div>
-            ))}
-
-            <div className="flex justify-between items-center mt-8">
-              <strong className="text-xl text-gray-800">
-                Total Price: ₹ {totalPrice}
-              </strong>
-              <button
-                onClick={orderhandler}
-                className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
-              >
-                {orderloader ? (
-                  "Order Checkout"
-                ) : (
-                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {cart.products.length !== 0 && (
-          <div className="bg-white p-8 rounded-lg shadow-xl shadow-blue-500/50">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Delivery Details
-            </h2>
-            <p
-              className={`mb-4 text-sm text-red-800 rounded-lg bg-red-50 p-4 ${
-                err ? "" : "hidden"
-              }`}
-              role="alert"
-            >
-              {err}
-            </p>
-            <div className="mb-6">
-              <input
-                type="text"
-                ref={address}
-                placeholder="Enter Address"
-                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
-              />
-            </div>
-            <div className="mb-6">
-              <input
-                ref={pincode}
-                maxLength="6"
-                type="number"
-                placeholder="Enter Pincode"
-                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
-              />
-            </div>
-            <div className="mb-6">
-              <select
-                ref={payment_mode}
-                className="border border-gray-300 rounded-md py-2 px-4 w-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
-              >
-                <option value="COD">Cash on Delivery</option>
-                <option value="CREDITCARD">Credit Card</option>
-                <option value="EMI">EMI</option>
-              </select>
             </div>
           </div>
         )}
       </div>
-      {paymentModel && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Complete Payment</h2>
-      
-      <div className="mb-6">
-        <input
-          ref={cardno}
-          type="text"
-          placeholder="Card Number"
-          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-        />
-      </div>
-
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <input
-          ref={cardcvv}
-          type="text"
-          placeholder="CVV"
-          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-        />
-        <input
-          ref={cardexp}
-          type="text"
-          placeholder="Expiry Date (MM/YY)"
-          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-        />
-      </div>
-
-      <div className="mb-6">
-        <input
-          ref={cardname}
-          type="text"
-          placeholder="Cardholder Name"
-          className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
-        />
-      </div>
-        <div className="mb-6">   <p
-              className={`mb-4 text-sm text-red-800 rounded-lg bg-red-50 p-4 ${
-                paymenterr ? "" : "hidden"
-              }`}
-              role="alert"
-            >
-              {paymenterr}
-            </p> </div>
-      <div className="flex justify-center">
-        <button
-          onClick={handlepayment}
-          className="bg-blue-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
-          >
-          {paymentloader ? (
-                  "Complete Payment"
-                ) : (
-                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
-                )}
-        </button>
-      </div>
     </div>
-  </div>
-)}
-
-    </div>
-
- 
   );
 };

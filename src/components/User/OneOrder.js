@@ -9,7 +9,19 @@ const OneOrder = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    viewoneorder(id, setorderedata, navigate);
+    const fetchOrder = async () => {
+      try {
+        const response = await viewoneorder(id);
+        setorderedata(response.data);
+      } catch (error) {
+        console.error(`Failed to fetch order ${id}:`, error);
+        if (error.response?.status === 404) {
+          navigate("/404");
+        }
+      }
+    };
+
+    fetchOrder();
   }, [id, navigate]);
 
   if (!orderdata) {
@@ -23,44 +35,46 @@ const OneOrder = () => {
       </h2>
 
       <div className="bg-white rounded-lg shadow-lg p-6">
-        {orderdata.map((item) => (
-          <div
-            key={item._id}
-            className="flex flex-col sm:flex-row sm:items-center py-6 border-b border-gray-300"
-          >
-            {/* Product Image */}
-            <div className="w-full sm:w-32 sm:h-32 mb-4 sm:mb-0">
-              <img
-                className="w-full h-full object-cover rounded-lg"
-                src={
-                  item?.product_id?.image === ""
-                    ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
-                    : item?.product_id?.image
-                }
-                alt="Product"
-              />
-            </div>
-
-            {/* Product Details */}
-            <div className="flex-1 ml-0 sm:ml-6">
-              <h3 className="text-xl text-gray-700 font-semibold mb-2">
-                {item?.product_id?.title}
-              </h3>
-              <p className="text-gray-600 text-lg mb-2">
-                <span className="font-medium">Price:</span> ₹{item?.price}
-              </p>
-              <p className="text-gray-600 text-lg mb-4">
-                <span className="font-medium">Quantity:</span> {item?.quantity}
-              </p>
-              <a
-                href={`/Product/${item?.product_id?._id}`}
-                className="inline-block px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
-              >
-                View Product
-              </a>
-            </div>
+        <div
+          className="flex flex-col sm:flex-row sm:items-center py-6"
+        >
+          {/* Product Image */}
+          <div className="w-full sm:w-32 sm:h-32 mb-4 sm:mb-0">
+            <img
+              className="w-full h-full object-cover rounded-lg"
+              src={
+                orderdata?.product_id?.image === ""
+                  ? "https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
+                  : orderdata?.product_id?.image
+              }
+              alt="Product"
+            />
           </div>
-        ))}
+
+          {/* Product Details */}
+          <div className="flex-1 ml-0 sm:ml-6">
+            <h3 className="text-xl text-gray-700 font-semibold mb-2">
+              {orderdata?.product_id?.title}
+            </h3>
+            <p className="text-gray-600 text-lg mb-2">
+              <span className="font-medium">Price:</span> ₹{orderdata?.price}
+            </p>
+            <p className="text-gray-600 text-lg mb-2">
+              <span className="font-medium">Quantity:</span> {orderdata?.quantity}
+            </p>
+            <p className="text-gray-600 text-lg mb-2">
+              <span className="font-medium">Payment Mode:</span>{" "}
+              {orderdata?.payment_mode}
+            </p>
+            <p className="text-gray-600 text-lg mb-2">
+              <span className="font-medium">Payment Status:</span>{" "}
+              {orderdata?.payment_status}
+            </p>
+            <p className="text-gray-600 text-lg mb-2">
+              <span className="font-medium">Order Status:</span> {orderdata?.status}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

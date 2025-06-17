@@ -1,75 +1,70 @@
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-  withCredentials: true, // Set withCredentials at the instance level
+  baseURL: API_URL,
+  withCredentials: true, 
 });
 
-export const createorder = (body, navigate,setpaymentModel,setpaymentOrderid) => {
-  axiosInstance
-    .post(`/api/v1/orders/create-order`, body, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-      // setTimeout(() => {
-        console.log(res.data.data[0].payment_mode);
-        if(res.data.data[0].payment_mode==="CREDITCARD"){
-          setpaymentOrderid(res.data.data[0]._id)
-          setpaymentModel(true);
-        }
-        else{
-          navigate(`/order`);
-        }
-    //   }, 1000);
-     })
-    .catch((err) => console.log(err));
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('accesstoken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    config.headers['Content-Type'] = 'application/json';
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export const createCodOrder = async (data) => {
+  try {
+    const response = await axiosInstance.post(`/api/v1/orders/create-order`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating COD order:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
-
-export const paymentOrder = (body,navigate) => {
-  axiosInstance
-    .post(`/api/v1/orders/verify`, body, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((res) => {
-       setTimeout(() => {
-        console.log(res.data.data);
-        // if(res.data.data[0].payment_mode==="CREDITCARD"){
-        //   setpaymentOrderid(res.data.data[0]._id)
-        //   setpaymentModel(true);
-        // }
-        // else{
-          navigate(`/order`);
-        // }
-   }, 1000);
-     })
-    .catch((err) => console.log(err));
-};
-export const viewoneorder = (id, setorderedata, navigate) => {
-  axiosInstance
-    .get(`/api/v1/orders/view-order/${id}`)
-    .then((res) => {
-      console.log(res.data.data);
-      setorderedata(res.data.data);
-    })
-    .catch((err) => {
-      if (err.request.status === 404) {
-        navigate("/404");
-      }
-    });
+export const createRazorpayOrder = async (data) => {
+  try {
+    const response = await axiosInstance.post(`/api/v1/orders/create-razorpay-order`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
-export const vieworder = (setorderedata) => {
-  axiosInstance
-    .get(`/api/v1/orders/view-order`)
-    .then((res) => setorderedata(res.data.data))
-    .catch((err) => {
-      if (err.response.status === 404) {
-        setorderedata("Not Found");
-      }
-    });
+export const verifyOnlinePayment = async (data) => {
+  try {
+    const response = await axiosInstance.post(`/api/v1/orders/verify-payment`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying payment:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const vieworder = async () => {
+  try {
+    const response = await axiosInstance.get(`/api/v1/orders/view-orders`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching orders:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const viewoneorder = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/api/v1/orders/view-order/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching order ${id}:`, error.response?.data || error.message);
+    throw error;
+  }
 };

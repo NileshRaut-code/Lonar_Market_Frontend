@@ -1,303 +1,171 @@
 import React, { useEffect, useState } from "react";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Title, Tooltip, Legend, PointElement } from "chart.js"; // Import LineElement for Line chart
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Title, Tooltip, Legend, PointElement } from "chart.js";
 
-import { sellerallorder } from "../../utils/sellerutils"; // Importing your sellerallorder function
-import Loading from "../Loader comp/Loading"; // Import your Loading component
+import { sellerallorder } from "../../utils/sellerutils";
 
-// Register necessary chart components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement, // Register LineElement for Line charts
-  ArcElement, // Register ArcElement for Doughnut and Pie charts
-  Title,
-  Tooltip,
-  Legend,
-  PointElement
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, ArcElement, Title, Tooltip, Legend, PointElement);
+
+const StatCard = ({ icon, title, value, colorClass }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+    <div className={`p-3 rounded-full ${colorClass}`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-sm font-medium text-gray-500">{title}</p>
+      <p className="text-2xl font-bold text-gray-800">{value}</p>
+    </div>
+  </div>
+);
+
+const ChartCard = ({ title, children }) => (
+  <div className="bg-white p-6 rounded-lg shadow-md">
+    <h3 className="text-lg font-semibold text-gray-700 mb-4">{title}</h3>
+    <div className="h-80">{children}</div>
+  </div>
+);
+
+const DashboardSkeleton = () => (
+  <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen animate-pulse">
+    <div className="h-8 w-1/3 bg-gray-200 rounded mb-8"></div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-md h-96"></div>
+      <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md h-96"></div>
+    </div>
+  </div>
 );
 
 const SalesDash = () => {
-  const [data, setData] = useState(null); // State to hold the fetched orders data
-  const [salesData, setSalesData] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
   const [deliveredOrders, setDeliveredOrders] = useState(0);
-  const [salesByCategory, setSalesByCategory] = useState([0, 0, 0, 0, 0]); // Mock categories
-  const [highestSellingProducts, setHighestSellingProducts] = useState([]); // Highest selling products data
-  const [loading, setLoading] = useState(true); // Loading state to handle the loading spinner
+  const [salesByMonth, setSalesByMonth] = useState(null);
+  const [orderStatusData, setOrderStatusData] = useState(null);
 
-  // Fetching the orders data when the component mounts
   useEffect(() => {
-    sellerallorder(setData)
-      .then(() => setLoading(false)) // Set loading to false once data is fetched
+    sellerallorder(setOrders)
+      .then(() => setLoading(false))
       .catch((error) => {
-        setLoading(false); // Handle error and stop loading
         console.error("Error fetching orders:", error);
+        setLoading(false);
       });
-  }, []); // Empty dependency array to run only once when the component mounts
+  }, []);
 
-  // Prepare the data when orders are fetched
   useEffect(() => {
-    if (data && data.length > 0) {
-      let totalSales = 0;
+    if (orders.length > 0) {
+      let revenue = 0;
       let pending = 0;
       let delivered = 0;
-      let salesPerMonth = Array(12).fill(0); // Sales per month (0-based)
-      const productSales = {}; // To store sales for each product
+      const monthlySales = Array(12).fill(0);
 
-      // Loop through orders and calculate required metrics
-      data.forEach((order) => {
-        totalSales += order.total_cost;
-        const month = new Date(order.createdAt).getMonth(); // 0-based month
-        salesPerMonth[month] += order.total_cost;
+      orders.forEach((order) => {
+        revenue += order.total_cost;
+        const month = new Date(order.createdAt).getMonth();
+        monthlySales[month] += order.total_cost;
 
-        if (order.status === "ORDERED BUT PENDING TO DISPATCH") {
-          pending += 1;
-        }
-
-        if (order.status === "DELIVERED") {
-          delivered += 1;
-        }
-
-        // Aggregate product sales
-        if (order.productDetails) {
-          // Handle cases where products are directly in order.productDetails (as in your sample data)
-          const productName = order.productDetails.title;
-          const productPrice = order.price;
-          const productQuantity = order.quantity;
-
-          if (!productSales[productName]) {
-            productSales[productName] = 0;
-          }
-
-          productSales[productName] += productPrice * productQuantity;
-        }
+        if (order.status === "ORDERED BUT PENDING TO DISPATCH") pending++;
+        if (order.status === "DELIVERED") delivered++;
       });
 
-      // Set the sales data for the line chart
-      setSalesData({
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [
-          {
-            label: "Sales",
-            data: salesPerMonth,
-            borderColor: "rgb(34, 197, 94)",
-            backgroundColor: "rgba(34, 197, 94, 0.2)",
-            tension: 0.1,
-          },
-        ],
-      });
-
-      // Set pending and delivered orders count
+      setTotalRevenue(revenue);
+      setTotalOrders(orders.length);
       setPendingOrders(pending);
       setDeliveredOrders(delivered);
 
-      // Sales by Category (mocked categories)
-      const categorySales = [0, 0, 0, 0, 0]; // 5 categories: Electronics, Furniture, Groceries, Clothing, Others
-      data.forEach((order) => {
-        categorySales[0] += order.total_cost; // Example: All orders categorized as Electronics for now
+      setSalesByMonth({
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+          label: "Sales",
+          data: monthlySales,
+          borderColor: "#4f46e5",
+          backgroundColor: "rgba(79, 70, 229, 0.1)",
+          fill: true,
+          tension: 0.4,
+        }],
       });
-      setSalesByCategory(categorySales);
-
-      // Prepare the data for the highest-selling products chart
-      const sortedProducts = Object.entries(productSales)
-        .sort((a, b) => b[1] - a[1]) // Sort products by sales amount (descending)
-        .slice(0, 5); // Take top 5 products
-      setHighestSellingProducts(sortedProducts);
+      
+      setOrderStatusData({
+        labels: ["Pending", "Delivered", "Other"],
+        datasets: [{
+          label: "Order Status",
+          data: [pending, delivered, orders.length - pending - delivered],
+          backgroundColor: ["#f59e0b", "#10b981", "#6b7280"],
+          hoverOffset: 4,
+        }],
+      });
     }
-  }, [data]);
+  }, [orders]);
 
-  // If loading, show the Loading component
   if (loading) {
-    return <Loading />; // This will show the Loading spinner
+    return <DashboardSkeleton />;
   }
 
-  const doughnutOptions = {
-    responsive: true,  // Ensures the chart is responsive
-    plugins: {
-      tooltip: {
-        enabled: true,  // Enable tooltips
-      },
-      legend: {
-        position: "top", // Position of the legend (you can change to "bottom", "left", etc.)
-      },
-    },
-    elements: {
-      arc: {
-        borderWidth: 1, // Border width for each segment
-      },
-    },
-    cutout: "70%", // Adjust the cutout (hole size) – reduce it to make the hole smaller
-    radius: "80%", // Adjust the radius to make the whole chart smaller or bigger
-  };
-  // Data for the bar chart (Pending vs Delivered Orders)
-  const orderData = {
-    labels: ["Pending", "Delivered"],
-    datasets: [
-      {
-        label: "Orders",
-        data: [pendingOrders, deliveredOrders],
-        backgroundColor: ["rgba(252, 165, 165)", "rgba(34, 197, 94)"],
-        borderColor: ["rgba(252, 165, 165)", "rgba(34, 197, 94)"],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Data for the Doughnut chart (Sales by Category)
-  const salesDistributionData = {
-    labels: ["Electronics", "Furniture", "Groceries", "Clothing", "Others"],
-    datasets: [
-      {
-        label: "Sales by Category",
-        data: salesByCategory,
-        backgroundColor: [
-          "rgba(59, 130, 246)", // Blue
-          "rgba(245, 158, 11)", // Yellow
-          "rgba(34, 197, 94)",  // Green
-          "rgba(255, 99, 132)", // Red
-          "rgba(255, 159, 64)", // Orange
-        ],
-      },
-    ],
-  };
-
-  // Data for the Bar chart (Highest Selling Products)
-  const highestSellingProductsData = {
-    labels: highestSellingProducts.map(([productName]) => 
-        productName.length > 10 ? productName.substring(0, 10) + '...' : productName
-      ),
-    datasets: [
-      {
-        label: "Product Sales",
-        data: highestSellingProducts.map(([, totalSales]) => totalSales),
-        backgroundColor: "rgba(59, 130, 246)",
-        borderColor: "rgba(59, 130, 246)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const barChartOptions = {
+  const chartOptions = {
     responsive: true,
-    maintainAspectRatio: true, // Disable aspect ratio so it fills the container
-    scales: {
-      x: {
-        beginAtZero: true,
-      },
-      y: {
-        beginAtZero: false,
-        max: Math.max(...highestSellingProducts.map(([, sales]) => sales)) * 1.5, // Make sure the chart is scaled well
-      },
-    },
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true }, x: { grid: { display: false } } },
   };
 
   return (
-    <div className="p-8 space-y-6 bg-gradient-to-r from-blue-100 via-pink-100 to-purple-100  min-h-screen">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-semibold text-gray-800">Sales Dashboard</h1>
-        <div className="text-gray-600 text-xl">Welcome, Seller</div>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">Sales Dashboard</h1>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Total Sales</h2>
-            <p className="text-3xl font-bold text-green-600">
-              ₹ {data.reduce((acc, order) => acc + order.total_cost, 0)}
-            </p>
-          </div>
-          <div className="text-green-600 text-4xl">💰</div>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Pending Orders</h2>
-            <p className="text-3xl font-bold text-yellow-600">{pendingOrders}</p>
-          </div>
-          <div className="text-yellow-600 text-4xl">⏳</div>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Delivered Orders</h2>
-            <p className="text-3xl font-bold text-green-600">{deliveredOrders}</p>
-          </div>
-          <div className="text-green-600 text-4xl">✔️</div>
-        </div>
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard 
+          title="Total Revenue" 
+          value={`₹${totalRevenue.toLocaleString('en-IN')}`}
+          colorClass="bg-green-100 text-green-600"
+          icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>}
+        />
+        <StatCard 
+          title="Total Orders" 
+          value={totalOrders}
+          colorClass="bg-blue-100 text-blue-600"
+          icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
+        />
+        <StatCard 
+          title="Pending Orders" 
+          value={pendingOrders}
+          colorClass="bg-yellow-100 text-yellow-600"
+          icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+        />
+        <StatCard 
+          title="Delivered Orders" 
+          value={deliveredOrders}
+          colorClass="bg-indigo-100 text-indigo-600"
+          icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8a1 1 0 001-1zM3 11h10" /></svg>}
+        />
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Line Chart: Sales Trend */}
-        {salesData && salesData.labels && salesData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales Trend</h2>
-            <Line data={salesData} />
-          </div>
-        )}
-
-        {/* Bar Chart: Pending vs Delivered Orders */}
-        {orderData && orderData.labels && orderData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Pending vs Delivered Orders</h2>
-            <Bar data={orderData} />
-          </div>
-        )}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-         {/* Bar Chart: Highest Selling Products */}
-         {highestSellingProductsData && highestSellingProductsData.labels && highestSellingProductsData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">some charts</h2>
-            <div className="flex-1">        
-            </div>
-          </div>
-        )} 
-         {highestSellingProductsData && highestSellingProductsData.labels && highestSellingProductsData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Highest Selling Products</h2>
-            <div className="flex-1">          <Bar data={highestSellingProductsData} options={barChartOptions} />
-            </div>
-          </div>
-        )} 
-        {highestSellingProductsData && highestSellingProductsData.labels && highestSellingProductsData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">some charts</h2>
-            <div className="flex-1">        
-            </div>
-          </div>
-        )} 
-        
-
-      
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Doughnut Chart: Sales by Category */}
-          {highestSellingProductsData && highestSellingProductsData.labels && highestSellingProductsData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">some charts</h2>
-            <div className="flex-1">        
-            </div>
-          </div>
-        )} 
-        {highestSellingProductsData && highestSellingProductsData.labels && highestSellingProductsData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">some charts</h2>
-            <div className="flex-1">        
-            </div>
-          </div>
-        )} 
-        {salesDistributionData && salesDistributionData.labels && salesDistributionData.datasets && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales Distribution by Category</h2>
-            <Doughnut data={salesDistributionData} options={doughnutOptions}/>
-          </div>
-        )}
-
-      
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="lg:col-span-3">
+          <ChartCard title="Sales Over Time">
+            {salesByMonth && <Line data={salesByMonth} options={chartOptions} />}
+          </ChartCard>
+        </div>
+        <div className="lg:col-span-2">
+          <ChartCard title="Order Status Distribution">
+            {orderStatusData && <Doughnut data={orderStatusData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }} />}
+          </ChartCard>
+        </div>
       </div>
       
     </div>
