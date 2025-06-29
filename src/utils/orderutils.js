@@ -5,19 +5,12 @@ const API_URL = process.env.REACT_APP_API_URL;
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true, 
+    headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('accesstoken');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    config.headers['Content-Type'] = 'application/json';
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+
 
 export const createCodOrder = async (data) => {
   try {
@@ -31,6 +24,7 @@ export const createCodOrder = async (data) => {
 
 export const createRazorpayOrder = async (data) => {
   try {
+    console.log(data)
     const response = await axiosInstance.post(`/api/v1/orders/create-razorpay-order`, data);
     return response.data;
   } catch (error) {
