@@ -3,6 +3,7 @@ import { reviewSubmit } from "../../utils/userutils";
 
 const AddReview = ({ data, setShowReviewModal }) => {
   const [rating, setRating] = useState(0);
+  const [errmsg, seterrmsg] = useState(false);
   const comment = useRef(null);
 
   const handleReview = () => {
@@ -11,7 +12,7 @@ const AddReview = ({ data, setShowReviewModal }) => {
     }
     const commentdata = { comment: comment.current.value, rating: rating };
     const body = JSON.stringify(commentdata);
-    reviewSubmit(body, data);
+    reviewSubmit(body, data,seterrmsg);
   };
 
   const handleRatingChange = (event) => {
@@ -84,6 +85,7 @@ const AddReview = ({ data, setShowReviewModal }) => {
             >
               Submit Review
             </button>
+            {errmsg && <p className="text-red-500 mt-2">{errmsg}</p>}
           </div>
         </form>
       </div>

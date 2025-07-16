@@ -57,14 +57,8 @@ export const Loginuser = (
     })
     .catch((err) => {
       setLoading(false);
-      console.log(err.response.statusText);
-      let msgdata = err.response.statusText;
-      if (msgdata === "Unauthorized") {
-        msgdata = "Password is Incorrect";
-      } else {
-        msgdata = "Email is incorrect : user not found";
-      }
-      seterrmsg(msgdata);
+     
+      seterrmsg(err.response.data.message);
     });
 };
 
@@ -101,15 +95,12 @@ export const Signupuser = (dispatch, navigate, seterrmsg, body, setLoading) => {
       navigate("/");
     })
     .catch((err) => {
-      console.log(err);
-      setLoading(false);
-      console.log(err.response);
-      if (err.response.status === 409)
-        seterrmsg("User With Email or Username is already Existed");
+      
+        seterrmsg(err.response.data.message);
     });
 };
 
-export const reviewSubmit = (body, id) => {
+export const reviewSubmit = (body, id,seterrmsg) => {
   console.log(body, id);
   axiosInstance
     .post(
@@ -125,7 +116,7 @@ export const reviewSubmit = (body, id) => {
       console.log(res);
       window.location.reload();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => seterrmsg(err.response.data.message));
 };
 
 export const updateProfile = (body, seterr) => {
@@ -141,7 +132,7 @@ export const updateProfile = (body, seterr) => {
       console.log(res);
       seterr("Profile Succesfully Updated");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => seterr(err.response.data.message));
 };
 
 export const updateProfileimage = (body, seterr) => {
@@ -157,7 +148,7 @@ export const updateProfileimage = (body, seterr) => {
       console.log(res);
       seterr("Profile Succesfully Updated");
     })
-    .catch((err) => console.log(err));
+    .catch((err) =>  seterr(err.response.data.message));
 };
 
 export const updateuserpassword = (body, seterrp) => {
@@ -173,5 +164,5 @@ export const updateuserpassword = (body, seterrp) => {
       console.log(res);
       seterrp("Password Succesfully Updated");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => seterrp(err.response.data.message));
 };

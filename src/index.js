@@ -25,6 +25,8 @@ import Allorder from "./components/User/Allorder.js";
 import OneOrder from "./components/User/OneOrder.js";
 import OrderManage from "./components/Seller/OrderManage.js";
 import SalesDash from "./components/Seller/SalesDash.js";
+import Reset from "./components/Reset.js";
+import Forget from "./components/Forget.js";
 const routes = createBrowserRouter([
   {
     path: "/",
@@ -35,6 +37,22 @@ const routes = createBrowserRouter([
         element: (
           <Auth aut={false}>
             <Login />
+          </Auth>
+        ),
+      },
+      {
+        path: "/reset-password/:resetToken",
+        element: (
+          <Auth aut={false}>
+            <Reset />
+          </Auth>
+        ),
+      },
+      {
+        path: "/forget-password",
+        element: (
+          <Auth aut={false}>
+            <Forget />
           </Auth>
         ),
       },
