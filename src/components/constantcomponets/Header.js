@@ -160,18 +160,36 @@ const Header = () => {
                 </li>
               )}
               <li>
-                <Link
-                  to="/cart"
-                  className="relative block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
-                >
-                  Cart
-                  {totalQuantity > 0 && (
-                    <span className="absolute top-0 right-0 -mt-1 -mr-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
-                      {totalQuantity}
-                    </span>
-                  )}
-                </Link>
-              </li>
+  <Link
+    to="/cart"
+    className="relative flex items-center space-x-1 py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
+  >
+    {/* Shopping cart icon (Heroicons) */}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 7M7 13l-2 5h14"
+      />
+    </svg>
+
+    <span>Cart</span>
+
+    {totalQuantity > 0 && (
+      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-semibold rounded-full px-2.5 py-0.5 min-w-[22px] text-center shadow-lg">
+        {totalQuantity}
+      </span>
+    )}
+  </Link>
+</li>
+
             </ul>
           </div>
         </div>
