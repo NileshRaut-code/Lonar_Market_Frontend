@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 const Header = () => {
   const status = useSelector((store) => store.user.status);
   const data = useSelector((store) => store.user.data);
+  const cartProducts = useSelector((store) => store.cart.products);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Calculate total quantity from cart products
+  const totalQuantity = cartProducts.reduce(
+    (total, product) => total + product.quantity,
+    0
+  );
 
   return (
     <header>
@@ -24,7 +30,7 @@ const Header = () => {
             />
           </Link>
           <div className="flex items-center lg:order-2 space-x-4">
-          {status && data.role !== "USER" && (
+            {status && data.role !== "USER" && (
               <Link
                 to={data.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"}
                 className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-4 py-2 lg:px-5 lg:py-2.5"
@@ -41,52 +47,48 @@ const Header = () => {
               </Link>
             ) : (
               <div>
-              
-{status && (
- <div className="relative group">
-   <Link to="/profile" className="focus:outline-none">    
-      <img
-                    src={data.avatar}  // User avatar
-                    alt="User Avatar"
-                    className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" // Added class to make it round and nicely fitted
-                  />
-   </Link>
+                {status && (
+                  <div className="relative group">
+                    <Link to="/profile" className="focus:outline-none">
+                      <img
+                        src={data.avatar} // User avatar
+                        alt="User Avatar"
+                        className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                      />
+                    </Link>
 
-   {/* Dropdown menu */}
-   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-     <ul className="py-2 text-sm text-gray-700">
-       <li>
-         <Link
-           to="/profile"
-           className="block px-4 py-2 text-gray-900 hover:bg-gray-100"
-         >
-           Profile
-         </Link>
-       </li>
-       <li>
-         <Link
-           to="/logout"
-           className="block px-4 py-2 text-red-700 hover:bg-gray-100"
-         >
-           Logout
-         </Link>
-       </li>
-       <li>
-       {status && (
-              <h2  className="block px-4 py-2 text-red-700 hover:bg-gray-100">
-                Role: <span className="capitalize">{data.role}</span>
-              </h2>
+                    {/* Dropdown menu */}
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <ul className="py-2 text-sm text-gray-700">
+                        <li>
+                          <Link
+                            to="/profile"
+                            className="block px-4 py-2 text-gray-900 hover:bg-gray-100"
+                          >
+                            Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            to="/logout"
+                            className="block px-4 py-2 text-red-700 hover:bg-gray-100"
+                          >
+                            Logout
+                          </Link>
+                        </li>
+                        <li>
+                          {status && (
+                            <h2 className="block px-4 py-2 text-red-700 hover:bg-gray-100">
+                              Role: <span className="capitalize">{data.role}</span>
+                            </h2>
+                          )}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
-       </li>
-     </ul>
-   </div>
- </div>
-)}
-   </div>
-            )}
-            
-
-         
 
             <button
               data-collapse-toggle="mobile-menu-2"
@@ -140,13 +142,13 @@ const Header = () => {
               <li>
                 <Link
                   to="/"
-                  className="block py-2 pr-4 pl-3 text-gray-900 rounded bg-blue-700  lg:bg-transparent lg:text-blue-700 lg:p-0"
+                  className="block py-2 pr-4 pl-3 text-gray-900 rounded bg-blue-700 lg:bg-transparent lg:text-blue-700 lg:p-0"
                   aria-current="page"
                 >
                   Home
                 </Link>
               </li>
-           
+
               {status && (
                 <li>
                   <Link
@@ -160,9 +162,14 @@ const Header = () => {
               <li>
                 <Link
                   to="/cart"
-                  className="block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
+                  className="relative block py-2 pr-4 pl-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0"
                 >
                   Cart
+                  {totalQuantity > 0 && (
+                    <span className="absolute top-0 right-0 -mt-1 -mr-3 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">
+                      {totalQuantity}
+                    </span>
+                  )}
                 </Link>
               </li>
             </ul>
