@@ -1,8 +1,13 @@
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { Loginuser, Signupuser, GoogleLoginuser, GoogleSignupuser } from "../utils/userutils";
-import { GoogleLogin,GoogleOAuthProvider } from "@react-oauth/google";
+import {
+  Loginuser,
+  Signupuser,
+  GoogleLoginuser,
+  GoogleSignupuser,
+} from "../utils/userutils";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -16,6 +21,7 @@ const Login = () => {
   const [errormsg, seterrmsg] = useState(null);
   const [islogin, setlogin] = useState(true);
   const [isLoading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false); // 🔹 loader for Google flow
 
   // Google Signup modal states
   const [showGoogleSignupModal, setShowGoogleSignupModal] = useState(false);
@@ -72,7 +78,18 @@ const Login = () => {
       seterrmsg("Phone and password are required.");
       return;
     }
-    GoogleSignupuser(dispatch, navigate, seterrmsg, googleToken, passwordG, phone);
+    setGoogleLoading(true); // 🔹 start loader
+    GoogleSignupuser(
+      dispatch,
+      navigate,
+      (msg) => {
+        seterrmsg(msg);
+        setGoogleLoading(false);
+      },
+      googleToken,
+      passwordG,
+      phone
+    );
     setShowGoogleSignupModal(false);
   }
 
@@ -85,7 +102,9 @@ const Login = () => {
         <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
           {!islogin && (
             <div>
-              <label className="text-sm font-medium text-gray-600">Full Name</label>
+              <label className="text-sm font-medium text-gray-600">
+                Full Name
+              </label>
               <input
                 className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 type="text"
@@ -107,7 +126,9 @@ const Login = () => {
 
           {!islogin && (
             <div>
-              <label className="text-sm font-medium text-gray-600">Username</label>
+              <label className="text-sm font-medium text-gray-600">
+                Username
+              </label>
               <input
                 className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 type="text"
@@ -119,7 +140,9 @@ const Login = () => {
 
           {!islogin && (
             <div>
-              <label className="text-sm font-medium text-gray-600">Contact Number</label>
+              <label className="text-sm font-medium text-gray-600">
+                Contact Number
+              </label>
               <input
                 className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 type="tel"
@@ -130,7 +153,9 @@ const Login = () => {
           )}
 
           <div>
-            <label className="text-sm font-medium text-gray-600">Password</label>
+            <label className="text-sm font-medium text-gray-600">
+              Password
+            </label>
             <input
               className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               type="password"
@@ -141,14 +166,19 @@ const Login = () => {
 
           {islogin && (
             <div className="text-right">
-              <Link to="/forget-password" className="text-sm text-indigo-600 hover:underline">
+              <Link
+                to="/forget-password"
+                className="text-sm text-indigo-600 hover:underline"
+              >
                 Forgot password?
               </Link>
             </div>
           )}
 
           {errormsg && (
-            <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg">{errormsg}</p>
+            <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg">
+              {errormsg}
+            </p>
           )}
 
           <button
@@ -169,18 +199,43 @@ const Login = () => {
 
         {/* Google Login */}
         <div className="mt-4 flex justify-center">
-         <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}> <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              const token = credentialResponse.credential;
-              if (islogin) {
-                GoogleLoginuser(dispatch, navigate, seterrmsg, token);
-              } else {
-                setGoogleToken(token);
-                setShowGoogleSignupModal(true);
-              }
-            }}
-            onError={() => seterrmsg("Google login failed. Try again.")}
-          /></GoogleOAuthProvider>
+          <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+            {googleLoading ? (
+              <button
+                disabled
+                className="flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-lg text-gray-600 cursor-not-allowed"
+              >
+                <div className="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full" />
+                Processing...
+              </button>
+            ) : (
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  const token = credentialResponse.credential;
+                  setGoogleLoading(true); // 🔹 start loader
+                  if (islogin) {
+                    GoogleLoginuser(
+                      dispatch,
+                      navigate,
+                      (msg) => {
+                        seterrmsg(msg);
+                        setGoogleLoading(false);
+                      },
+                      token
+                    );
+                  } else {
+                    setGoogleToken(token);
+                    setShowGoogleSignupModal(true);
+                    setGoogleLoading(false); // modal will handle next loading
+                  }
+                }}
+                onError={() => {
+                  seterrmsg("Google login failed. Try again.");
+                  setGoogleLoading(false);
+                }}
+              />
+            )}
+          </GoogleOAuthProvider>
         </div>
 
         <div className="mt-6 text-center text-sm text-gray-600">
@@ -218,7 +273,9 @@ const Login = () => {
       {showGoogleSignupModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 w-96">
-            <h3 className="text-xl font-semibold mb-4 text-indigo-700">Complete Signup</h3>
+            <h3 className="text-xl font-semibold mb-4 text-indigo-700">
+              Complete Signup
+            </h3>
 
             <input
               type="tel"
@@ -237,7 +294,9 @@ const Login = () => {
             />
 
             {errormsg && (
-              <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg mb-2">{errormsg}</p>
+              <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg mb-2">
+                {errormsg}
+              </p>
             )}
 
             <div className="flex justify-end gap-3">
@@ -249,9 +308,14 @@ const Login = () => {
               </button>
               <button
                 onClick={handleGoogleSignupSubmit}
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white"
+                disabled={googleLoading}
+                className="px-4 py-2 rounded-lg bg-indigo-600 text-white flex items-center justify-center"
               >
-                Continue
+                {googleLoading ? (
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                ) : (
+                  "Continue"
+                )}
               </button>
             </div>
           </div>
