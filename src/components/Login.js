@@ -169,7 +169,7 @@ const Login = () => {
 
         {/* Google Login */}
         <div className="mt-4 flex justify-center">
-         <GoogleOAuthProvider> <GoogleLogin
+         <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}> <GoogleLogin
             onSuccess={(credentialResponse) => {
               const token = credentialResponse.credential;
               if (islogin) {
