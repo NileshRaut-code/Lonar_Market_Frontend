@@ -76,13 +76,15 @@ const Login = () => {
       seterrmsg("Phone and password are required.");
       return;
     }
+    setLoading(true)
     GoogleSignupuser(
       dispatch,
       navigate,
       seterrmsg,
       googleToken,
       passwordG,
-      phone
+      phone,
+      setLoading
     );
     setShowGoogleSignupModal(false);
   }
@@ -198,7 +200,8 @@ const Login = () => {
               onSuccess={(credentialResponse) => {
                 const token = credentialResponse.credential;
                 if (islogin) {
-                  GoogleLoginuser(dispatch, navigate, seterrmsg, token);
+                  setLoading(true);
+                  GoogleLoginuser(dispatch, navigate, seterrmsg, token,setLoading);
                 } else {
                   setGoogleToken(token);
                   setShowGoogleSignupModal(true);
