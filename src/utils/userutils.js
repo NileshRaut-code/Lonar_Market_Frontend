@@ -73,7 +73,7 @@ export const Logoutuser = (dispatch, navigate) => {
     .catch(() => navigate("/"));
 };
 
-export const GoogleLoginuser = (dispatch, navigate, seterrmsg, token) => {
+export const GoogleLoginuser = (dispatch, navigate, seterrmsg, token,setLoading) => {
   axiosInstance
     .post("/api/v1/users/google-login", { token })
     .then((res) => {
@@ -81,6 +81,7 @@ export const GoogleLoginuser = (dispatch, navigate, seterrmsg, token) => {
       navigate("/");
     })
     .catch((err) => {
+      setLoading(false)
       seterrmsg(err.response?.data?.message || "Google login failed");
     });
 };
@@ -91,7 +92,8 @@ export const GoogleSignupuser = (
   seterrmsg,
   token,
   password,
-  phoneno
+  phoneno,
+  setLoading
 ) => {
   const body = { token, password, phoneno };
 
@@ -104,6 +106,7 @@ export const GoogleSignupuser = (
       navigate("/");
     })
     .catch((err) => {
+      setLoading(false)
       seterrmsg(err.response?.data?.message || "Google signup failed");
     });
 };
