@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { Loginuser, Signupuser, GoogleLoginuser, GoogleSignupuser } from "../utils/userutils";
 import { GoogleLogin,GoogleOAuthProvider } from "@react-oauth/google";
 
 const Login = () => {
@@ -12,98 +12,69 @@ const Login = () => {
   const password = useRef(null);
   const username = useRef(null);
   const fullName = useRef(null);
-  const [errormsg, seterrmsg] = useState(false);
+
+  const [errormsg, seterrmsg] = useState(null);
   const [islogin, setlogin] = useState(true);
   const [isLoading, setLoading] = useState(false);
 
-  async function handlelogin() {
-    try {
-      seterrmsg(null);
-      setLoading(true);
-      if (!email.current.value || !password.current.value) {
-        seterrmsg("Email and password are required.");
-        setLoading(false);
-        return;
-      }
-      const res = await axios.post("/api/login", {
-        email: email.current.value,
-        password: password.current.value,
-      });
-      console.log(res.data);
-      // dispatch user and navigate
-      navigate("/");
-    } catch (err) {
-      seterrmsg(err.response?.data?.message || "Login failed");
-    } finally {
+  // Google Signup modal states
+  const [showGoogleSignupModal, setShowGoogleSignupModal] = useState(false);
+  const [googleToken, setGoogleToken] = useState(null);
+  const [phone, setPhone] = useState("");
+  const [passwordG, setPasswordG] = useState("");
+
+  function handlelogin() {
+    seterrmsg(null);
+    setLoading(true);
+    if (!email.current.value || !password.current.value) {
+      seterrmsg("Email and password are required.");
       setLoading(false);
+      return;
     }
+    Loginuser(dispatch, navigate, seterrmsg, email, password, setLoading);
   }
 
-  async function handlesignin() {
-    try {
-      seterrmsg(null);
-      setLoading(true);
-      if (
-        !email.current.value ||
-        !password.current.value ||
-        !fullName.current.value ||
-        !username.current.value ||
-        !phoneno.current.value
-      ) {
-        seterrmsg("All fields are required.");
-        setLoading(false);
-        return;
-      }
-
-      const res = await axios.post("/api/signup", {
-        email: email.current.value,
-        password: password.current.value,
-        username: username.current.value,
-        fullName: fullName.current.value,
-        phoneno: phoneno.current.value,
-      });
-      console.log(res.data);
-      navigate("/");
-    } catch (err) {
-      seterrmsg(err.response?.data?.message || "Signup failed");
-    } finally {
+  function handlesignin() {
+    seterrmsg(null);
+    setLoading(true);
+    if (
+      !email.current.value ||
+      !password.current.value ||
+      !fullName.current.value ||
+      !username.current.value ||
+      !phoneno.current.value
+    ) {
+      seterrmsg("All fields are required.");
       setLoading(false);
-    }
-  }
-
-  const handleGoogleLogin = async (credentialResponse) => {
-    try {
-      const token = credentialResponse.credential;
-      const res = await axios.post("/api/google-login", { token });
-      console.log("Google Login:", res.data);
-      navigate("/");
-    } catch (err) {
-      seterrmsg(err.response?.data?.message || "Google login failed");
-    }
-  };
-
-  const handleGoogleSignup = async (credentialResponse) => {
-    const token = credentialResponse.credential;
-    // STEP 1: ask extra info (password + phone)
-    const password = prompt("Enter a password to use with your Google account:");
-    const phoneno = prompt("Enter your phone number:");
-    if (!password || !phoneno) {
-      seterrmsg("Password and phone number are required for Google signup.");
       return;
     }
 
-    try {
-      const res = await axios.post("/api/google-signup", {
-        token,
-        password,
-        phoneno,
-      });
-      console.log("Google Signup:", res.data);
-      navigate("/");
-    } catch (err) {
-      seterrmsg(err.response?.data?.message || "Google signup failed");
+    const phoneNoValue = phoneno.current.value;
+    if (phoneNoValue && !/^\d+$/.test(phoneNoValue)) {
+      seterrmsg("Phone number should only contain digits.");
+      setLoading(false);
+      return;
     }
-  };
+
+    const requestBody = {
+      email: email?.current?.value,
+      password: password?.current?.value,
+      username: username?.current?.value,
+      fullName: fullName?.current?.value,
+      phoneno: phoneno?.current.value,
+    };
+    const body = JSON.stringify(requestBody);
+    Signupuser(dispatch, navigate, seterrmsg, body, setLoading);
+  }
+
+  function handleGoogleSignupSubmit() {
+    if (!phone || !passwordG) {
+      seterrmsg("Phone and password are required.");
+      return;
+    }
+    GoogleSignupuser(dispatch, navigate, seterrmsg, googleToken, passwordG, phone);
+    setShowGoogleSignupModal(false);
+  }
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-white to-gray-100 px-4">
@@ -111,15 +82,12 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">
           {islogin ? "Welcome Back!" : "Create an Account"}
         </h2>
-
         <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
           {!islogin && (
             <div>
-              <label className="text-sm font-medium text-gray-600">
-                Full Name
-              </label>
+              <label className="text-sm font-medium text-gray-600">Full Name</label>
               <input
-                className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 type="text"
                 ref={fullName}
                 placeholder="John Doe"
@@ -130,7 +98,7 @@ const Login = () => {
           <div>
             <label className="text-sm font-medium text-gray-600">Email</label>
             <input
-              className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               type="email"
               ref={email}
               placeholder="you@example.com"
@@ -138,69 +106,81 @@ const Login = () => {
           </div>
 
           {!islogin && (
-            <>
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Username
-                </label>
-                <input
-                  className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-                  type="text"
-                  ref={username}
-                  placeholder="yourusername"
-                />
-              </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Username</label>
+              <input
+                className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                type="text"
+                ref={username}
+                placeholder="yourusername"
+              />
+            </div>
+          )}
 
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Contact Number
-                </label>
-                <input
-                  className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
-                  type="tel"
-                  ref={phoneno}
-                  placeholder="1234567890"
-                />
-              </div>
-            </>
+          {!islogin && (
+            <div>
+              <label className="text-sm font-medium text-gray-600">Contact Number</label>
+              <input
+                className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                type="tel"
+                ref={phoneno}
+                placeholder="1234567890"
+              />
+            </div>
           )}
 
           <div>
-            <label className="text-sm font-medium text-gray-600">
-              Password
-            </label>
+            <label className="text-sm font-medium text-gray-600">Password</label>
             <input
-              className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+              className="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               type="password"
               ref={password}
               placeholder="••••••••"
             />
           </div>
 
+          {islogin && (
+            <div className="text-right">
+              <Link to="/forget-password" className="text-sm text-indigo-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+          )}
+
           {errormsg && (
-            <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg">
-              {errormsg}
-            </p>
+            <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg">{errormsg}</p>
           )}
 
           <button
             className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-500 transition duration-200"
             onClick={islogin ? handlelogin : handlesignin}
           >
-            {isLoading ? "Loading..." : islogin ? "Log In" : "Sign Up"}
+            {isLoading ? (
+              <div className="flex justify-center">
+                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+              </div>
+            ) : islogin ? (
+              "Log In"
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
 
-        <div className="mt-6 space-y-3">
-         <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}> {islogin ? <GoogleLogin
-            onSuccess={handleGoogleLogin}
-            onError={() => seterrmsg("Google login failed")}
-          /> :
-          <GoogleLogin
-            onSuccess={handleGoogleSignup}
-            onError={() => seterrmsg("Google signup failed")}
-            text="signup_with"
-          />}</GoogleOAuthProvider>
+        {/* Google Login */}
+        <div className="mt-4 flex justify-center">
+         <GoogleOAuthProvider> <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              const token = credentialResponse.credential;
+              if (islogin) {
+                GoogleLoginuser(dispatch, navigate, seterrmsg, token);
+              } else {
+                setGoogleToken(token);
+                setShowGoogleSignupModal(true);
+              }
+            }}
+            onError={() => seterrmsg("Google login failed. Try again.")}
+          /></GoogleOAuthProvider>
         </div>
 
         <div className="mt-6 text-center text-sm text-gray-600">
@@ -233,6 +213,50 @@ const Login = () => {
           )}
         </div>
       </div>
+
+      {/* Google Signup Modal */}
+      {showGoogleSignupModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl shadow-lg p-6 w-96">
+            <h3 className="text-xl font-semibold mb-4 text-indigo-700">Complete Signup</h3>
+
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter Phone Number"
+              className="w-full mb-3 px-4 py-2 rounded-lg border border-gray-300"
+            />
+
+            <input
+              type="password"
+              value={passwordG}
+              onChange={(e) => setPasswordG(e.target.value)}
+              placeholder="Create Password"
+              className="w-full mb-3 px-4 py-2 rounded-lg border border-gray-300"
+            />
+
+            {errormsg && (
+              <p className="text-red-600 bg-red-100 text-sm px-4 py-2 rounded-lg mb-2">{errormsg}</p>
+            )}
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowGoogleSignupModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGoogleSignupSubmit}
+                className="px-4 py-2 rounded-lg bg-indigo-600 text-white"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
