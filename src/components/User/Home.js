@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, removeProduct } from "../../utils/productSlice.js";
 import Productcart from "./Productcart.js";
+import Ads from "./Ads.js";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -15,10 +16,7 @@ const Home = () => {
       axios
         .get(`${process.env.REACT_APP_API_URL}/api/v1/users/allproduct`)
         .then((res) => {
-          res.data.data.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
-          dispatch(addProduct(res.data.data));
+          dispatch(addProduct(res.data.data.data));
         })
         .catch(() => dispatch(removeProduct()));
     } else {
@@ -59,7 +57,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-
+       
         {/* Skeleton Loader for Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 py-10">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -129,6 +127,8 @@ const Home = () => {
     `}
         </style>
       </div>
+
+       <Ads/>
 
       {/* Filter and Search */}
       <div className="flex flex-col md:flex-row items-center md:justify-between px-6 py-4">
