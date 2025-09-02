@@ -100,7 +100,7 @@ const Ads = () => {
         <AiOutlineRight size={28} />
       </button>
 
-      {/* Dots */}
+
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {adData.data.map((_, idx) => (
           <div
