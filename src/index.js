@@ -27,10 +27,12 @@ import OrderManage from "./components/Seller/OrderManage.js";
 import SalesDash from "./components/Seller/SalesDash.js";
 import Reset from "./components/Reset.js";
 import Forget from "./components/Forget.js";
+import Error404 from "./404/Error404.js";
 const routes = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement:<Error404/>,
     children: [
       {
         path: "/login",
