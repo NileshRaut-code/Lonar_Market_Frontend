@@ -1,10 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import Header from '../components/constantcomponets/Header';
 const Error404 = () => {
   const navigate = useNavigate();
 
   return (
+    <>
+    <Header/>
+    
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center px-4">
       <h1 className="text-9xl font-extrabold text-gray-800">404</h1>
       <p className="text-2xl font-medium text-gray-600 mb-6 mt-4">Page Not Found</p>
@@ -16,6 +19,7 @@ const Error404 = () => {
         Go Back Home
       </button>
     </div>
+    </>
   )
 }
 
