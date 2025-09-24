@@ -115,7 +115,7 @@ const Allorder = () => {
                       />
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-800 hover:text-indigo-600">
-                          <Link to={`/product/${item.product_id?._id}`}>{item?.product_id?.title}</Link>
+                          <Link to={`/product/${item?.product_id?._id}`}>{item?.product_id?.title}</Link>
                         </h4>
                         <p className="text-sm text-gray-500 mt-1">Qty: {item.quantity}</p>
                         <p className="text-md font-bold text-gray-900 sm:hidden mt-2">₹{item.price * item.quantity}</p>
