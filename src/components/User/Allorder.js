@@ -95,14 +95,14 @@ const Allorder = () => {
         ) : (
           <div className="space-y-6">
             {orderdata.map((item) => (
-              <div key={item._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+              <div key={item?._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
                 <div className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
                     <div className="mb-4 sm:mb-0">
-                      <p className="text-sm text-gray-500">Order <span className="font-medium text-gray-900">#{item._id.substring(0, 8)}</span></p>
+                      <p className="text-sm text-gray-500">Order <span className="font-medium text-gray-900">#{item?._id.substring(0, 8)}</span></p>
                       <p className="text-sm text-gray-500 mt-1">Placed on <span className="font-medium text-gray-900">{new Date(item.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
                     </div>
-                    <Link to={`/order/${item._id}`} className="text-sm font-medium text-indigo-600 hover:text-indigo-500 self-start sm:self-center">
+                    <Link to={`/order/${item?._id}`} className="text-sm font-medium text-indigo-600 hover:text-indigo-500 self-start sm:self-center">
                       View Details
                     </Link>
                   </div>
@@ -115,7 +115,7 @@ const Allorder = () => {
                       />
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-800 hover:text-indigo-600">
-                          <Link to={`/product/${item.product_id._id}`}>{item?.product_id?.title}</Link>
+                          <Link to={`/product/${item.product_id?._id}`}>{item?.product_id?.title}</Link>
                         </h4>
                         <p className="text-sm text-gray-500 mt-1">Qty: {item.quantity}</p>
                         <p className="text-md font-bold text-gray-900 sm:hidden mt-2">₹{item.price * item.quantity}</p>
